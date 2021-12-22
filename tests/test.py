@@ -28,6 +28,32 @@ class TestCoord(t.TestCase):
         self.assertEqual(str(c), '(1, 2)')
 
 
+class TestStone(t.TestCase):
+    def test_to_string(self):
+        self.assertEqual(core.Stone.to_string(core.Stone.White), 'o')
+        self.assertEqual(core.Stone.to_string(core.Stone.Black), 'x')
+        self.assertEqual(core.Stone.to_string(core.Stone.Unset), '.')
+        self.assertEqual(core.Stone.to_string(core.Stone.Surrounding), '*')
+        self.assertEqual(core.Stone.to_string(core.Stone.OutOfRange), ' ')
+
+        with self.assertRaises(core.UnreachableError):
+            core.Stone.to_string(100)
+
+    def test_rival_stone_color(self):
+        self.assertEqual(
+                core.Stone.rival_stone_color(core.Stone.White),
+                core.Stone.Black)
+        self.assertEqual(
+                core.Stone.rival_stone_color(core.Stone.Black),
+                core.Stone.White)
+        for s in [
+                core.Stone.Unset,
+                core.Stone.Surrounding,
+                core.Stone.OutOfRange]:
+            with self.assertRaises(core.Stone.InvalidStoneError):
+                core.Stone.rival_stone_color(s)
+
+
 class TestBoard(t.TestCase):
     def test_str(self):
         c = core.Board()

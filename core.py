@@ -1,3 +1,8 @@
+class UnreachableError(BaseException):
+    def __str__(self):
+        return 'unreachable'
+
+
 class Coord:
     def __init__(self, x, y):
         self.__x, self.__y = x, y
@@ -26,6 +31,10 @@ class Stone:
     Surrounding = 3
     OutOfRange = 4
 
+    class InvalidStoneError(BaseException):
+        def __str__(self):
+            return 'Stone must be white or black'
+
     @staticmethod
     def to_string(stone):
         if stone == Stone.White:
@@ -39,8 +48,16 @@ class Stone:
         elif stone == Stone.OutOfRange:
             return ' '
         else:
-            # TODO: improve
-            raise BaseException('unreachable')
+            raise UnreachableError()
+
+    @staticmethod
+    def rival_stone_color(stone):
+        if stone == Stone.White:
+            return Stone.Black
+        elif stone == Stone.Black:
+            return Stone.White
+        else:
+            raise Stone.InvalidStoneError()
 
 
 class Board:
