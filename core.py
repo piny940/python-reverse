@@ -1,3 +1,6 @@
+import copy
+
+
 class UnreachableError(BaseException):
     def __str__(self):
         return 'unreachable'
@@ -25,33 +28,31 @@ class Coord:
 
 class Stone:
     # Constants to specify cell states.
-    White = 0
-    Black = 1
-    Unset = 2
-    Surrounding = 3
-    OutOfRange = 4
+    (
+        White,
+        Black,
+        Unset,
+        Surrounding,
+        OutOfRange
+    ) = list(range(5))
+    _AlternateChar = ('o', 'x', '.', '*', ' ')
+    _MapCharToStone = \
+        dict(zip(_AlternateChar, range(len(_AlternateChar))))
 
     class InvalidStoneError(BaseException):
         def __str__(self):
             return 'Stone must be white or black'
 
     @staticmethod
-    def to_string(stone):
-        if stone == Stone.White:
-            return 'o'
-        elif stone == Stone.Black:
-            return 'x'
-        elif stone == Stone.Unset:
-            return '.'
-        elif stone == Stone.Surrounding:
-            return '*'
-        elif stone == Stone.OutOfRange:
-            return ' '
-        else:
-            raise UnreachableError()
+    def to_char(stone):
+        return Stone._AlternateChar[stone]
 
     @staticmethod
-    def rival_stone_color(stone):
+    def char_to_stone(char):
+        return Stone._MapCharToStone[char]
+
+    @staticmethod
+    def get_rival_stone_color(stone):
         if stone == Stone.White:
             return Stone.Black
         elif stone == Stone.Black:
@@ -151,7 +152,7 @@ class Board:
         visualized = ''
         for stones in self.__board:
             for stone in stones:
-                visualized += Stone.to_string(stone)
+                visualized += Stone.to_char(stone)
             visualized += "\n"
         return visualized[:-1]  # Remove the last "\n"
 
@@ -173,3 +174,13 @@ class Board:
             line += '|'
             print(line)
         print(sep)
+
+    # Set entire board matrix. Mainly for debugging.
+    def set_entire(self, board):
+        self.__stones_count = [0, 0]
+        self.__board = copy.deepcopy(board)
+        for line in self.__board:
+            for cell in line:
+                for color in [Stone.White, Stone.Black]:
+                    if cell == color:
+                        self.__stones_count[color] += 1

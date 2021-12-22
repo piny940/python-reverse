@@ -7,6 +7,53 @@ def trim_for_board(s):
     return textwrap.dedent(s).strip()
 
 
+def board_string_to_matrix(s):
+    matrix = []
+    lines = trim_for_board(s).split("\n")
+    if len(lines) != core.Board.Size:
+        raise BaseException('Invalid size of lines')
+    for line in lines:
+        if len(line) != core.Board.Size:
+            raise BaseException('Invalid size of columns')
+        matrix_line = []
+        for c in line:
+            matrix_line.append(core.Stone.char_to_stone(c))
+        matrix.append(matrix_line)
+    return matrix
+
+
+class TestUtilityFunctions(t.TestCase):
+    def test_board_string_to_matrix(self):
+        board_string = trim_for_board('''
+            ........
+            ........
+            ..****..
+            ..*ox*..
+            ..*xo*..
+            ..****..
+            ........
+            ........
+        ''')
+
+        w = core.Stone.White
+        b = core.Stone.Black
+        u = core.Stone.Unset
+        s = core.Stone.Surrounding
+        board_matrix = [
+                [u, u, u, u, u, u, u, u],
+                [u, u, u, u, u, u, u, u],
+                [u, u, s, s, s, s, u, u],
+                [u, u, s, w, b, s, u, u],
+                [u, u, s, b, w, s, u, u],
+                [u, u, s, s, s, s, u, u],
+                [u, u, u, u, u, u, u, u],
+                [u, u, u, u, u, u, u, u],
+        ]
+        self.assertEqual(
+                board_string_to_matrix(board_string),
+                board_matrix)
+
+
 class TestCoord(t.TestCase):
     def test_init(self):
         c = core.Coord(1, 1)
@@ -29,29 +76,29 @@ class TestCoord(t.TestCase):
 
 
 class TestStone(t.TestCase):
-    def test_to_string(self):
-        self.assertEqual(core.Stone.to_string(core.Stone.White), 'o')
-        self.assertEqual(core.Stone.to_string(core.Stone.Black), 'x')
-        self.assertEqual(core.Stone.to_string(core.Stone.Unset), '.')
-        self.assertEqual(core.Stone.to_string(core.Stone.Surrounding), '*')
-        self.assertEqual(core.Stone.to_string(core.Stone.OutOfRange), ' ')
+    def test_to_char(self):
+        self.assertEqual(core.Stone.to_char(core.Stone.White), 'o')
+        self.assertEqual(core.Stone.to_char(core.Stone.Black), 'x')
+        self.assertEqual(core.Stone.to_char(core.Stone.Unset), '.')
+        self.assertEqual(core.Stone.to_char(core.Stone.Surrounding), '*')
+        self.assertEqual(core.Stone.to_char(core.Stone.OutOfRange), ' ')
 
-        with self.assertRaises(core.UnreachableError):
-            core.Stone.to_string(100)
+        with self.assertRaises(IndexError):
+            core.Stone.to_char(100)
 
     def test_rival_stone_color(self):
         self.assertEqual(
-                core.Stone.rival_stone_color(core.Stone.White),
+                core.Stone.get_rival_stone_color(core.Stone.White),
                 core.Stone.Black)
         self.assertEqual(
-                core.Stone.rival_stone_color(core.Stone.Black),
+                core.Stone.get_rival_stone_color(core.Stone.Black),
                 core.Stone.White)
         for s in [
                 core.Stone.Unset,
                 core.Stone.Surrounding,
                 core.Stone.OutOfRange]:
             with self.assertRaises(core.Stone.InvalidStoneError):
-                core.Stone.rival_stone_color(s)
+                core.Stone.get_rival_stone_color(s)
 
 
 class TestBoard(t.TestCase):
@@ -131,3 +178,20 @@ class TestBoard(t.TestCase):
         self.assertNotEqual(str(c), initial_state)
         c.init_state()
         self.assertEqual(str(c), initial_state)
+
+    def test_set_entire(self):
+        board_string = '''
+            ******..
+            *o**x*..
+            ******..
+            ..*ox*..
+            ..*xo**.
+            ..***o**
+            ....*ooo
+            ....****
+        '''
+        c = core.Board()
+        c.set_entire(board_string_to_matrix(board_string))
+        self.assertEqual(str(c), trim_for_board(board_string))
+        self.assertEqual(c.get_white_stones_count(), 7)
+        self.assertEqual(c.get_black_stones_count(), 3)
