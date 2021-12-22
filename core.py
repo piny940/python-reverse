@@ -207,23 +207,32 @@ class Reversi:
         self.__player_color = Stone.White
         self.__board = Board()
 
+    # Return how many stones are sandwiched by 'color' stones in direction of
+    # 'direction' from position 'coord'
+    def get_sandwiched_stones_count(self, coord, direction, color):
+        rival_color = Stone.get_rival_stone_color(color)
+        p = coord + direction
+        if self.__board.get_stone(p) != rival_color:
+            return 0
+
+        count = 1
+        while True:
+            p += direction
+            s = self.__board.get_stone(p)
+            if s == color:
+                return count
+            elif s == rival_color:
+                count += 1
+            else:
+                return 0
+
     # Return TRUE if stone of 'color' can put on 'coord'
     def can_put_here(self, coord, color):
         if self.__board.get_stone(coord) != Stone.Surrounding:
             return False
-        rival_color = Stone.get_rival_stone_color(color)
         for d in Reversi.EightDirections:
-            p = coord + d
-            if self.__board.get_stone(p) != rival_color:
-                continue
-            while True:
-                p += d
-                s = self.__board.get_stone(p)
-                if s == color:
-                    return True
-                elif s == rival_color:
-                    continue
-                break
+            if self.get_sandwiched_stones_count(coord, d, color) > 0:
+                return True
         return False
 
     def put_stone_color(self, coord, color):
@@ -239,27 +248,15 @@ class Reversi:
                 self.__board.set_stone(coord + d, Stone.Surrounding)
 
         # Reverse sandwiched stones
-        rival_color = Stone.get_rival_stone_color(color)
         for d in Reversi.EightDirections:
-            p = coord + d
-            if self.__board.get_stone(p) != rival_color:
+            count = self.get_sandwiched_stones_count(coord, d, color)
+            if count == 0:
                 continue
 
-            do_reverse = False
-            while True:
+            p = coord
+            for _ in range(count):
                 p += d
-                stone = self.__board.get_stone(p)
-                if stone == color:
-                    do_reverse = True
-                    break
-                elif stone != rival_color:
-                    break
-
-            if do_reverse:
-                p = coord + d
-                while self.__board.get_stone(p) == rival_color:
-                    self.__board.set_stone(p, color)
-                    p += d
+                self.__board.set_stone(p, color)
 
         # Check if someone wins
         # TODO: Notify
