@@ -72,7 +72,7 @@ class Board:
         #   o ... White stone
         #   x ... Black stone
         #   * ... Cells surrounding stones
-        #      0 1 2 3 4 5 6 7
+        #      0 1 2 3 4 5 6 7  --> x
         #     +-+-+-+-+-+-+-+-+
         #    0| | | | | | | | |
         #     +-+-+-+-+-+-+-+-+
@@ -90,6 +90,9 @@ class Board:
         #     +-+-+-+-+-+-+-+-+
         #    7| | | | | | | | |
         #     +-+-+-+-+-+-+-+-+
+        #    |
+        #    |
+        #  y v
         self.__board = [[Stone.Unset for _ in range(8)] for _ in range(8)]
         self.__stones_count = [0, 0]
 
@@ -125,7 +128,7 @@ class Board:
             return False
         (x, y) = coord.get()
         origin = self.get_stone(coord)
-        self.__board[x][y] = stone
+        self.__board[y][x] = stone
 
         # Update counts of stones
         for color in [Stone.White, Stone.Black]:
@@ -140,7 +143,7 @@ class Board:
         if not self.is_valid_coord(coord):
             return Stone.OutOfRange
         (x, y) = coord.get()
-        return self.__board[x][y]
+        return self.__board[y][x]
 
     def get_white_stones_count(self):
         return self.__stones_count[Stone.White]

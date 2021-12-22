@@ -28,7 +28,7 @@ class TestUtilityFunctions(t.TestCase):
             ........
             ........
             ..****..
-            ..*ox*..
+            ..*oo*..
             ..*xo*..
             ..****..
             ........
@@ -43,7 +43,7 @@ class TestUtilityFunctions(t.TestCase):
                 [u, u, u, u, u, u, u, u],
                 [u, u, u, u, u, u, u, u],
                 [u, u, s, s, s, s, u, u],
-                [u, u, s, w, b, s, u, u],
+                [u, u, s, w, w, s, u, u],
                 [u, u, s, b, w, s, u, u],
                 [u, u, s, s, s, s, u, u],
                 [u, u, u, u, u, u, u, u],
