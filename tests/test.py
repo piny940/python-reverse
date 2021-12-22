@@ -113,3 +113,21 @@ class TestBoard(t.TestCase):
         c.set_stone(core.Coord(0, 0), core.Stone.Black)
         self.assertEqual(c.get_white_stones_count(), 2)
         self.assertEqual(c.get_black_stones_count(), 3)
+
+    def test_init_state(self):
+        initial_state = trim_for_board('''
+            ........
+            ........
+            ..****..
+            ..*ox*..
+            ..*xo*..
+            ..****..
+            ........
+            ........
+        ''')
+        c = core.Board()
+        c.set_stone(core.Coord(0, 0), core.Stone.White)
+        c.set_stone(core.Coord(1, 1), core.Stone.Black)
+        self.assertNotEqual(str(c), initial_state)
+        c.init_state()
+        self.assertEqual(str(c), initial_state)
