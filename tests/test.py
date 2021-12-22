@@ -195,3 +195,143 @@ class TestBoard(t.TestCase):
         self.assertEqual(str(c), trim_for_board(board_string))
         self.assertEqual(c.get_white_stones_count(), 7)
         self.assertEqual(c.get_black_stones_count(), 3)
+
+
+# TODO: Add tests for unputtable place
+class TestReversi(t.TestCase):
+    def test_can_put_here(self):
+        r = core.Reversi()
+        self.assertTrue(r.can_put_here(core.Coord(4, 2), core.Stone.White))
+        self.assertTrue(r.can_put_here(core.Coord(2, 3), core.Stone.Black))
+        self.assertFalse(r.can_put_here(core.Coord(4, 2), core.Stone.Black))
+        self.assertFalse(r.can_put_here(core.Coord(2, 3), core.Stone.White))
+        self.assertFalse(r.can_put_here(core.Coord(3, 3), core.Stone.White))
+        self.assertFalse(r.can_put_here(core.Coord(1, 1), core.Stone.White))
+        self.assertFalse(r.can_put_here(core.Coord(8, 8), core.Stone.White))
+
+    def test_put_stone_color_1(self):
+        r = core.Reversi()
+        r.get_board().set_entire(board_string_to_matrix('''
+            ........
+            ***.....
+            *x*.....
+            *x*.....
+            *o*.....
+            ***.....
+            ........
+            ........
+        '''))
+        r.put_stone_color(core.Coord(1, 1), core.Stone.White)
+        self.assertEqual(str(r.get_board()), trim_for_board('''
+            ***.....
+            *o*.....
+            *o*.....
+            *o*.....
+            *o*.....
+            ***.....
+            ........
+            ........
+        '''))
+        self.assertEqual(r.get_board().get_white_stones_count(), 4)
+        self.assertEqual(r.get_board().get_black_stones_count(), 0)
+
+    def test_put_stone_color_2(self):
+        r = core.Reversi()
+        r.get_board().set_entire(board_string_to_matrix('''
+            ........
+            ****....
+            *xx**...
+            *x*x**..
+            *o**x**.
+            *x***o*.
+            *o*.***.
+            ***.....
+        '''))
+        r.put_stone_color(core.Coord(1, 1), core.Stone.White)
+        self.assertEqual(str(r.get_board()), trim_for_board('''
+            ***.....
+            *o**....
+            *oo**...
+            *o*o**..
+            *o**o**.
+            *x***o*.
+            *o*.***.
+            ***.....
+        '''))
+        self.assertEqual(r.get_board().get_white_stones_count(), 9)
+        self.assertEqual(r.get_board().get_black_stones_count(), 1)
+
+    def test_put_stone_color_3(self):
+        r = core.Reversi()
+        r.get_board().set_entire(board_string_to_matrix('''
+            .*******
+            **xxxxxx
+            *xx*****
+            *x*x**..
+            *o**x**.
+            *****o*.
+            ....***.
+            ........
+        '''))
+        r.put_stone_color(core.Coord(1, 1), core.Stone.White)
+        self.assertEqual(str(r.get_board()), trim_for_board('''
+            ********
+            *oxxxxxx
+            *oo*****
+            *o*o**..
+            *o**o**.
+            *****o*.
+            ....***.
+            ........
+        '''))
+        self.assertEqual(r.get_board().get_white_stones_count(), 8)
+        self.assertEqual(r.get_board().get_black_stones_count(), 6)
+
+    def test_put_stone_color_4(self):
+        r = core.Reversi()
+        r.get_board().set_entire(board_string_to_matrix('''
+            ........
+            .*******
+            .*ooooo*
+            .*oxxxo*
+            .*ox*xo*
+            .*oxxxo*
+            .*ooooo*
+            .*******
+        '''))
+        r.put_stone_color(core.Coord(4, 4), core.Stone.White)
+        self.assertEqual(str(r.get_board()), trim_for_board('''
+            ........
+            .*******
+            .*ooooo*
+            .*ooooo*
+            .*ooooo*
+            .*ooooo*
+            .*ooooo*
+            .*******
+        '''))
+        self.assertEqual(r.get_board().get_white_stones_count(), 25)
+        self.assertEqual(r.get_board().get_black_stones_count(), 0)
+
+    def test_next_turn_1(self):
+        r = core.Reversi()
+        self.assertEqual(r.get_player_color(), core.Stone.White)
+        r.next_turn()
+        self.assertEqual(r.get_player_color(), core.Stone.Black)
+
+    def text_next_turn_2(self):
+        r = core.Reversi()
+        self.assertEqual(r.get_player_color(), core.Stone.White)
+        r.get_board().set_entire(board_string_to_matrix('''
+            ........
+            ........
+            .*****..
+            .*xxx*..
+            .*xox*..
+            .*xxx*..
+            .*****..
+            ........
+        '''))
+        r.next_turn()
+        # Black has no place to put stone, so they have to pass.
+        self.assertEqual(r.get_player_color(), core.Stone.White)
