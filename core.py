@@ -148,6 +148,7 @@ class Board:
     def get_black_stones_count(self):
         return self.__stones_count[Stone.Black]
 
+    # Stringify the board, convenient for debugging.
     def __str__(self):
         visualized = ''
         for stones in self.__board:
@@ -156,6 +157,7 @@ class Board:
             visualized += "\n"
         return visualized[:-1]  # Remove the last "\n"
 
+    # Print the board, in format easy to see for humans.
     def print_board(self):
         print("o ... White stone")
         print("x ... Black stone")
