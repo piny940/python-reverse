@@ -213,31 +213,31 @@ class Reversi:
         self.__player_color = Stone.White
         self.__board = Board()
 
-    # Return how many stones are sandwiched by 'color' stones in direction of
+    # Return coords of stones sandwiched by 'color' stones in direction of
     # 'direction' from position 'coord'
-    def get_sandwiched_stones_count(self, coord, direction, color):
+    def get_sandwiched_stones_coords(self, coord, direction, color):
         rival_color = Stone.get_rival_stone_color(color)
         p = coord + direction
         if self.__board.get_stone(p) != rival_color:
-            return 0
+            return []
 
-        count = 1
+        coords = [p]
         while True:
             p += direction
             s = self.__board.get_stone(p)
             if s == color:
-                return count
+                return coords
             elif s == rival_color:
-                count += 1
+                coords.append(p)
             else:
-                return 0
+                return []
 
     # Return TRUE if stone of 'color' can put on 'coord'
     def can_put_here(self, coord, color):
         if self.__board.get_stone(coord) != Stone.Surrounding:
             return False
         for d in Reversi.EightDirections:
-            if self.get_sandwiched_stones_count(coord, d, color) > 0:
+            if len(self.get_sandwiched_stones_coords(coord, d, color)) > 0:
                 return True
         return False
 
@@ -255,13 +255,12 @@ class Reversi:
 
         # Reverse sandwiched stones
         for d in Reversi.EightDirections:
-            count = self.get_sandwiched_stones_count(coord, d, color)
-            if count == 0:
+            sandwiched_coords = \
+                self.get_sandwiched_stones_coords(coord, d, color)
+            if len(sandwiched_coords) == 0:
                 continue
 
-            p = coord
-            for _ in range(count):
-                p += d
+            for p in sandwiched_coords:
                 self.__board.set_stone(p, color)
 
         # Check if someone wins

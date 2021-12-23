@@ -236,15 +236,22 @@ class TestReversi(t.TestCase):
             ........
         '''))
 
-        def get_count(direction):
-            return r.get_sandwiched_stones_count(
+        def get_coords(direction):
+            return r.get_sandwiched_stones_coords(
                 core.Coord(1, 0), direction, core.Stone.White)
 
-        self.assertEqual(get_count(core.Coord(-1, 0)), 0)
-        self.assertEqual(get_count(core.Coord(0, -1)), 0)
-        self.assertEqual(get_count(core.Coord(1, 0)), 0)
-        self.assertEqual(get_count(core.Coord(1, 1)), 3)
-        self.assertEqual(get_count(core.Coord(0, 1)), 2)
+        self.assertEqual(get_coords(core.Coord(-1, 0)), [])
+        self.assertEqual(get_coords(core.Coord(0, -1)), [])
+        self.assertEqual(get_coords(core.Coord(1, 0)), [])
+        self.assertEqual(get_coords(core.Coord(1, 1)), [
+                core.Coord(2, 1),
+                core.Coord(3, 2),
+                core.Coord(4, 3)
+            ])
+        self.assertEqual(get_coords(core.Coord(0, 1)), [
+                core.Coord(1, 1),
+                core.Coord(1, 2)
+            ])
 
     def test_put_stone_color_1(self):
         r = core.Reversi()
