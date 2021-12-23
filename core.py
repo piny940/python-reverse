@@ -16,6 +16,12 @@ class Coord:
     def __sub__(self, other):
         return Coord(self.__x - other.__x, self.__y - other.__y)
 
+    def __eq__(self, other):
+        return self.__x == other.__x and self.__y == other.__y
+
+    def __ne__(self, other):
+        return not self == other
+
     def __str__(self):
         return f'({self.__x}, {self.__y})'
 

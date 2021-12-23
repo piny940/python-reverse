@@ -74,6 +74,20 @@ class TestCoord(t.TestCase):
         c = core.Coord(1, 2)
         self.assertEqual(str(c), '(1, 2)')
 
+    def test_eq(self):
+        base = core.Coord(0, 0)
+        self.assertTrue(base == core.Coord(0, 0))
+        self.assertFalse(base == core.Coord(1, 0))
+        self.assertFalse(base == core.Coord(0, 1))
+        self.assertFalse(base == core.Coord(1, 1))
+
+    def test_ne(self):
+        base = core.Coord(0, 0)
+        self.assertTrue(base != core.Coord(1, 0))
+        self.assertTrue(base != core.Coord(0, 1))
+        self.assertTrue(base != core.Coord(1, 1))
+        self.assertFalse(base != core.Coord(0, 0))
+
 
 class TestStone(t.TestCase):
     def test_to_char(self):
