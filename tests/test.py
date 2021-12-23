@@ -223,12 +223,12 @@ class TestReversi(t.TestCase):
         self.assertFalse(r.can_put_here(core.Coord(1, 1), core.Stone.White))
         self.assertFalse(r.can_put_here(core.Coord(8, 8), core.Stone.White))
 
-    def test_get_sandwiched_stone_count(self):
+    def test_get_sandwiched_stones_coords(self):
         r = core.Reversi()
         r.get_board().set_entire(board_string_to_matrix('''
             **xxxxxx
             *xx*****
-            *x*x**..
+            *o*x**..
             *o**x**.
             *****o*.
             ....***.
@@ -250,7 +250,6 @@ class TestReversi(t.TestCase):
             ])
         self.assertEqual(get_coords(core.Coord(0, 1)), [
                 core.Coord(1, 1),
-                core.Coord(1, 2)
             ])
 
     def test_put_stone_color_1(self):
