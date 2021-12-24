@@ -196,6 +196,9 @@ class Board:
                     if cell == color:
                         self.__stones_count[color] += 1
 
+    def get_entire(self):
+        return copy.deepcopy(self.__board)
+
 
 class Reversi:
     EightDirections = [
