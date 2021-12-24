@@ -230,6 +230,12 @@ class Reversi:
             else:
                 return []
 
+    def get_all_sandwiched_stones_coords(self, coord, color):
+        coords = []
+        for d in Reversi.EightDirections:
+            coords.extend(self.get_sandwiched_stones_coords(coord, d, color))
+        return coords
+
     # Return TRUE if stone of 'color' can put on 'coord'
     def can_put_here(self, coord, color):
         if self.__board.get_stone(coord) != Stone.Surrounding:
@@ -252,14 +258,8 @@ class Reversi:
                 self.__board.set_stone(coord + d, Stone.Surrounding)
 
         # Reverse sandwiched stones
-        for d in Reversi.EightDirections:
-            sandwiched_coords = \
-                self.get_sandwiched_stones_coords(coord, d, color)
-            if len(sandwiched_coords) == 0:
-                continue
-
-            for p in sandwiched_coords:
-                self.__board.set_stone(p, color)
+        for p in self.get_all_sandwiched_stones_coords(coord, color):
+            self.__board.set_stone(p, color)
 
         # Check if someone wins
         # TODO: Notify

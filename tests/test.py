@@ -252,6 +252,47 @@ class TestReversi(t.TestCase):
                 core.Coord(1, 1),
             ])
 
+    def test_get_all_sandwiched_stones_coords_1(self):
+        r = core.Reversi()
+        r.get_board().set_entire(board_string_to_matrix('''
+            **xxxxxx
+            *xx*****
+            *o*x**..
+            *o**x**.
+            *****o*.
+            ....***.
+            ........
+            ........
+        '''))
+        self.assertEqual(
+                r.get_all_sandwiched_stones_coords(
+                    core.Coord(1, 0),
+                    core.Stone.White),
+                [
+                    core.Coord(2, 1),
+                    core.Coord(3, 2),
+                    core.Coord(4, 3),
+                    core.Coord(1, 1)
+                ])
+
+    def test_get_all_sandwiched_stones_coords_2(self):
+        r = core.Reversi()
+        r.get_board().set_entire(board_string_to_matrix('''
+            ........
+            ........
+            ........
+            ...***..
+            ...*x*..
+            ...***..
+            ........
+            ........
+        '''))
+        self.assertEqual(
+                r.get_all_sandwiched_stones_coords(
+                    core.Coord(4, 3),
+                    core.Stone.White),
+                [])
+
     def test_put_stone_color_1(self):
         r = core.Reversi()
         r.get_board().set_entire(board_string_to_matrix('''
