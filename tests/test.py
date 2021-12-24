@@ -132,7 +132,7 @@ class TestBoard(t.TestCase):
 
     def test_is_valid_coord(self):
         c = core.Board()
-        self.assertTrue(c.is_valid_coord(core.Coord(1, 1)))
+        self.assertTrue(c.is_valid_coord(core.Coord(0, 0)))
         self.assertTrue(c.is_valid_coord(core.Coord(7, 1)))
         self.assertTrue(c.is_valid_coord(core.Coord(1, 7)))
         self.assertFalse(c.is_valid_coord(core.Coord(-1, 1)))
