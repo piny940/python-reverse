@@ -7,6 +7,10 @@ class UnreachableError(BaseException):
 
 
 class Coord:
+    '''
+    Coord class is 2 dimention vector for expressing coordinates.
+    '''
+
     def __init__(self, x, y):
         self.__x, self.__y = x, y
 
@@ -33,7 +37,12 @@ class Coord:
 
 
 class Stone:
-    # Constants to specify cell states.
+    '''
+    Stone class holds constants to specify cell states, and some operatons to
+    the constants such as a method to get representative characters of cell
+    states.
+    '''
+
     (
         White,
         Black,
@@ -68,6 +77,10 @@ class Stone:
 
 
 class Board:
+    '''
+    Board class provides primitive operations for 8x8 matrix.
+    '''
+
     Size = 8
 
     def __init__(self):
@@ -81,8 +94,12 @@ class Board:
         (x, y) = coord.get()
         return 0 <= x <= (Board.Size - 1) and 0 <= y <= (Board.Size - 1)
 
-    # Set stone of position 'coord' to 'stone'. Return True if success.
     def set_stone(self, coord, stone):
+        '''
+        set_stone(coord, stone)
+            Set cell in the position 'coord' to 'stone'. Return True if
+            success.
+        '''
         if not self.is_valid_coord(coord):
             return False
         (x, y) = coord.get()
@@ -119,8 +136,11 @@ class Board:
             visualized += "\n"
         return visualized[:-1]  # Remove the last "\n"
 
-    # Print the board, in format easy to see for humans.
     def print_board(self):
+        '''
+        print_board():
+            Print the board, in format easy to see for humans.
+        '''
         print("o ... White stone")
         print("x ... Black stone")
         print("  0 1 2 3 4 5 6 7")
@@ -154,6 +174,9 @@ class Board:
 
 
 class Reversi:
+    '''
+    Reversi class provides reversi game related operations
+    '''
     EightDirections = [
         Coord(1, 0),
         Coord(1, 1),
@@ -220,10 +243,13 @@ class Reversi:
         for c in surrounding_cells:
             self.__board.set_stone(c, Stone.Surrounding)
 
-    # Return coords of stones sandwiched by 'color' stones in direction of
-    # 'direction' from position 'coord'
-    # The position 'coord' must points a valid position.
     def get_sandwiched_stones_coords(self, coord, direction, color):
+        '''
+        get_sandwiched_stones_coords(coord, direction, color):
+            Return coords of stones sandwiched by 'color' stones in direction
+            of 'direction' from position 'coord'
+            The position 'coord' must points a valid position.
+        '''
         rival_color = Stone.get_rival_stone_color(color)
         p = coord
         coords = []
@@ -243,8 +269,11 @@ class Reversi:
             coords.extend(self.get_sandwiched_stones_coords(coord, d, color))
         return coords
 
-    # Return TRUE if stone of 'color' can put on 'coord'
     def can_put_here(self, coord, color):
+        '''
+        can_put_here(coord, color):
+            Return TRUE if stone of 'color' can put on 'coord'
+        '''
         if self.__board.get_stone(coord) != Stone.Surrounding:
             return False
         for d in Reversi.EightDirections:
@@ -253,6 +282,15 @@ class Reversi:
         return False
 
     def put_stone_color(self, coord, color):
+        '''
+        put_stone_color(coord, color):
+            Put stone of 'color' to the position 'coord', and reverse the
+            stones sandwiched by the new stone and some existing stone whose
+            color is 'color' too.
+
+            Also checks how many white/black stones on the board, and checks if
+            either player wins.
+        '''
         if not self.can_put_here(coord, color):
             # Cannot put here
             # TODO: Notify
@@ -268,7 +306,7 @@ class Reversi:
         for p in self.get_all_sandwiched_stones_coords(coord, color):
             self.__board.set_stone(p, color)
 
-        # Check if someone wins
+        # Check if either player wins
         # TODO: Notify
         w = self.__board.get_white_stones_count()
         b = self.__board.get_black_stones_count()
@@ -283,6 +321,16 @@ class Reversi:
         self.put_stone_color(coord, self.__player_color)
 
     def proceed_to_next(self):
+        '''
+        proceed_to_next():
+            Go on to the next player's turn.
+
+            If the next player can put nowhere, notify players that the next
+            player need pass, and continue the current player's turn.
+
+            Also, if the rival player is CPU, do the CPU's action, and return
+            back to the current player's turn.
+        '''
         next_player = Stone.get_rival_stone_color(self.__player_color)
 
         for x in range(Board.Size):
