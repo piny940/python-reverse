@@ -121,10 +121,10 @@ class TestBoard(t.TestCase):
         expected = trim_for_board('''
             ........
             ........
-            ..****..
-            ..*ox*..
-            ..*xo*..
-            ..****..
+            ........
+            ........
+            ........
+            ........
             ........
             ........
         ''')
@@ -139,59 +139,6 @@ class TestBoard(t.TestCase):
         self.assertFalse(c.is_valid_coord(core.Coord(8, 1)))
         self.assertFalse(c.is_valid_coord(core.Coord(1, -1)))
         self.assertFalse(c.is_valid_coord(core.Coord(1, 8)))
-
-    def test_get_stone(self):
-        c = core.Board()
-        self.assertEqual(c.get_stone(core.Coord(0, 0)), core.Stone.Unset)
-        self.assertEqual(c.get_stone(core.Coord(2, 2)), core.Stone.Surrounding)
-        self.assertEqual(c.get_stone(core.Coord(3, 3)), core.Stone.White)
-        self.assertEqual(c.get_stone(core.Coord(3, 4)), core.Stone.Black)
-        self.assertEqual(c.get_stone(core.Coord(-1, 0)), core.Stone.OutOfRange)
-        self.assertEqual(c.get_stone(core.Coord(0, -1)), core.Stone.OutOfRange)
-        self.assertEqual(c.get_stone(core.Coord(8, 0)), core.Stone.OutOfRange)
-        self.assertEqual(c.get_stone(core.Coord(0, 8)), core.Stone.OutOfRange)
-
-    def test_set_stone(self):
-        c = core.Board()
-        p = core.Coord(0, 0)
-        c.set_stone(p, core.Stone.White)
-        self.assertEqual(c.get_stone(p), core.Stone.White)
-
-        c1, c2 = core.Board(), core.Board()
-        r = c1.set_stone(core.Coord(-1, -1), core.Stone.White)
-        self.assertFalse(r)
-        self.assertEqual(str(c1), str(c2))
-
-    def test_stones_count(self):
-        c = core.Board()
-        self.assertEqual(c.get_white_stones_count(), 2)
-        self.assertEqual(c.get_black_stones_count(), 2)
-
-        c.set_stone(core.Coord(0, 0), core.Stone.White)
-        self.assertEqual(c.get_white_stones_count(), 3)
-        self.assertEqual(c.get_black_stones_count(), 2)
-
-        c.set_stone(core.Coord(0, 0), core.Stone.Black)
-        self.assertEqual(c.get_white_stones_count(), 2)
-        self.assertEqual(c.get_black_stones_count(), 3)
-
-    def test_init_state(self):
-        initial_state = trim_for_board('''
-            ........
-            ........
-            ..****..
-            ..*ox*..
-            ..*xo*..
-            ..****..
-            ........
-            ........
-        ''')
-        c = core.Board()
-        c.set_stone(core.Coord(0, 0), core.Stone.White)
-        c.set_stone(core.Coord(1, 1), core.Stone.Black)
-        self.assertNotEqual(str(c), initial_state)
-        c.init_state()
-        self.assertEqual(str(c), initial_state)
 
     def test_set_entire(self):
         board_string = '''
@@ -209,6 +156,92 @@ class TestBoard(t.TestCase):
         self.assertEqual(str(c), trim_for_board(board_string))
         self.assertEqual(c.get_white_stones_count(), 7)
         self.assertEqual(c.get_black_stones_count(), 3)
+
+    def test_get_stone(self):
+        c = core.Board()
+        c.set_entire(board_string_to_matrix('''
+            ........
+            ........
+            ..****..
+            ..*ox*..
+            ..*xo*..
+            ..****..
+            ........
+            ........
+        '''))
+        self.assertEqual(c.get_stone(core.Coord(0, 0)), core.Stone.Unset)
+        self.assertEqual(c.get_stone(core.Coord(2, 2)), core.Stone.Surrounding)
+        self.assertEqual(c.get_stone(core.Coord(3, 3)), core.Stone.White)
+        self.assertEqual(c.get_stone(core.Coord(3, 4)), core.Stone.Black)
+        self.assertEqual(c.get_stone(core.Coord(-1, 0)), core.Stone.OutOfRange)
+        self.assertEqual(c.get_stone(core.Coord(0, -1)), core.Stone.OutOfRange)
+        self.assertEqual(c.get_stone(core.Coord(8, 0)), core.Stone.OutOfRange)
+        self.assertEqual(c.get_stone(core.Coord(0, 8)), core.Stone.OutOfRange)
+
+    def test_set_stone(self):
+        c = core.Board()
+        c.set_entire(board_string_to_matrix('''
+            ........
+            ........
+            ..****..
+            ..*ox*..
+            ..*xo*..
+            ..****..
+            ........
+            ........
+        '''))
+        p = core.Coord(0, 0)
+        c.set_stone(p, core.Stone.White)
+        self.assertEqual(c.get_stone(p), core.Stone.White)
+
+        c1, c2 = core.Board(), core.Board()
+        r = c1.set_stone(core.Coord(-1, -1), core.Stone.White)
+        self.assertFalse(r)
+        self.assertEqual(str(c1), str(c2))
+
+    def test_stones_count(self):
+        c = core.Board()
+        self.assertEqual(c.get_white_stones_count(), 0)
+        self.assertEqual(c.get_black_stones_count(), 0)
+
+        c.set_entire(board_string_to_matrix('''
+            ........
+            ........
+            ..****..
+            ..*ox*..
+            ..*xo*..
+            ..****..
+            ........
+            ........
+        '''))
+        self.assertEqual(c.get_white_stones_count(), 2)
+        self.assertEqual(c.get_black_stones_count(), 2)
+
+        c.set_stone(core.Coord(0, 0), core.Stone.White)
+        self.assertEqual(c.get_white_stones_count(), 3)
+        self.assertEqual(c.get_black_stones_count(), 2)
+
+        c.set_stone(core.Coord(0, 0), core.Stone.Black)
+        self.assertEqual(c.get_white_stones_count(), 2)
+        self.assertEqual(c.get_black_stones_count(), 3)
+
+    def test_init_state(self):
+        initial_state = trim_for_board('''
+            ........
+            ........
+            ........
+            ........
+            ........
+            ........
+            ........
+            ........
+        ''')
+        c = core.Board()
+        c.set_stone(core.Coord(0, 0), core.Stone.White)
+        c.set_stone(core.Coord(1, 1), core.Stone.Black)
+        self.assertNotEqual(str(c), initial_state)
+        c.init_state()
+        self.assertEqual(str(c), initial_state)
 
 
 # TODO: Add tests for unputtable place

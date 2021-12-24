@@ -74,55 +74,8 @@ class Board:
         self.init_state()
 
     def init_state(self):
-        # Initialize board like this:
-        #   o ... White stone
-        #   x ... Black stone
-        #   * ... Cells surrounding stones
-        #      0 1 2 3 4 5 6 7  --> x
-        #     +-+-+-+-+-+-+-+-+
-        #    0| | | | | | | | |
-        #     +-+-+-+-+-+-+-+-+
-        #    1| | | | | | | | |
-        #     +-+-+-+-+-+-+-+-+
-        #    2| | |*|*|*|*| | |
-        #     +-+-+-+-+-+-+-+-+
-        #    3| | |*|o|x|*| | |
-        #     +-+-+-+-+-+-+-+-+
-        #    4| | |*|x|o|*| | |
-        #     +-+-+-+-+-+-+-+-+
-        #    5| | |*|*|*|*| | |
-        #     +-+-+-+-+-+-+-+-+
-        #    6| | | | | | | | |
-        #     +-+-+-+-+-+-+-+-+
-        #    7| | | | | | | | |
-        #     +-+-+-+-+-+-+-+-+
-        #    |
-        #    |
-        #  y v
         self.__board = [[Stone.Unset for _ in range(8)] for _ in range(8)]
         self.__stones_count = [0, 0]
-
-        self.set_stone(Coord(3, 3), Stone.White)
-        self.set_stone(Coord(4, 4), Stone.White)
-        self.set_stone(Coord(3, 4), Stone.Black)
-        self.set_stone(Coord(4, 3), Stone.Black)
-
-        surrounding_cells = [
-            Coord(2, 2),
-            Coord(2, 3),
-            Coord(2, 4),
-            Coord(2, 5),
-            Coord(3, 2),
-            Coord(3, 5),
-            Coord(4, 2),
-            Coord(4, 5),
-            Coord(5, 2),
-            Coord(5, 3),
-            Coord(5, 4),
-            Coord(5, 5),
-        ]
-        for c in surrounding_cells:
-            self.set_stone(c, Stone.Surrounding)
 
     def is_valid_coord(self, coord):
         (x, y) = coord.get()
@@ -213,8 +166,59 @@ class Reversi:
     ]
 
     def __init__(self):
-        self.__player_color = Stone.White
         self.__board = Board()
+        self.init_state()
+
+    def init_state(self):
+        self.__player_color = Stone.White
+        self.__board.init_state()
+
+        # Initialize board like this:
+        #   o ... White stone
+        #   x ... Black stone
+        #   * ... Cells surrounding stones
+        #      0 1 2 3 4 5 6 7  --> x
+        #     +-+-+-+-+-+-+-+-+
+        #    0| | | | | | | | |
+        #     +-+-+-+-+-+-+-+-+
+        #    1| | | | | | | | |
+        #     +-+-+-+-+-+-+-+-+
+        #    2| | |*|*|*|*| | |
+        #     +-+-+-+-+-+-+-+-+
+        #    3| | |*|o|x|*| | |
+        #     +-+-+-+-+-+-+-+-+
+        #    4| | |*|x|o|*| | |
+        #     +-+-+-+-+-+-+-+-+
+        #    5| | |*|*|*|*| | |
+        #     +-+-+-+-+-+-+-+-+
+        #    6| | | | | | | | |
+        #     +-+-+-+-+-+-+-+-+
+        #    7| | | | | | | | |
+        #     +-+-+-+-+-+-+-+-+
+        #    |
+        #    |
+        #  y v
+        self.__board.set_stone(Coord(3, 3), Stone.White)
+        self.__board.set_stone(Coord(4, 4), Stone.White)
+        self.__board.set_stone(Coord(3, 4), Stone.Black)
+        self.__board.set_stone(Coord(4, 3), Stone.Black)
+
+        surrounding_cells = [
+            Coord(2, 2),
+            Coord(2, 3),
+            Coord(2, 4),
+            Coord(2, 5),
+            Coord(3, 2),
+            Coord(3, 5),
+            Coord(4, 2),
+            Coord(4, 5),
+            Coord(5, 2),
+            Coord(5, 3),
+            Coord(5, 4),
+            Coord(5, 5),
+        ]
+        for c in surrounding_cells:
+            self.__board.set_stone(c, Stone.Surrounding)
 
     # Return coords of stones sandwiched by 'color' stones in direction of
     # 'direction' from position 'coord'
