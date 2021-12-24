@@ -278,7 +278,7 @@ class Reversi:
     def put_stone(self, coord):
         self.put_stone_color(coord, self.__player_color)
 
-    def next_turn(self):
+    def proceed_to_next(self):
         next_player = Stone.get_rival_stone_color(self.__player_color)
 
         for x in range(Board.Size):

@@ -397,13 +397,13 @@ class TestReversi(t.TestCase):
         self.assertEqual(r.get_board().get_white_stones_count(), 25)
         self.assertEqual(r.get_board().get_black_stones_count(), 0)
 
-    def test_next_turn_1(self):
+    def test_proceed_to_next_1(self):
         r = core.Reversi()
         self.assertEqual(r.get_player_color(), core.Stone.White)
-        r.next_turn()
+        r.proceed_to_next()
         self.assertEqual(r.get_player_color(), core.Stone.Black)
 
-    def text_next_turn_2(self):
+    def text_proceed_to_next_2(self):
         r = core.Reversi()
         self.assertEqual(r.get_player_color(), core.Stone.White)
         r.get_board().set_entire(board_string_to_matrix('''
@@ -416,6 +416,6 @@ class TestReversi(t.TestCase):
             .*****..
             ........
         '''))
-        r.next_turn()
+        r.proceed_to_next()
         # Black has no place to put stone, so they have to pass.
         self.assertEqual(r.get_player_color(), core.Stone.White)
