@@ -215,13 +215,11 @@ class Reversi:
 
     # Return coords of stones sandwiched by 'color' stones in direction of
     # 'direction' from position 'coord'
+    # The position 'coord' must points a valid position.
     def get_sandwiched_stones_coords(self, coord, direction, color):
         rival_color = Stone.get_rival_stone_color(color)
-        p = coord + direction
-        if self.__board.get_stone(p) != rival_color:
-            return []
-
-        coords = [p]
+        p = coord
+        coords = []
         while True:
             p += direction
             s = self.__board.get_stone(p)
