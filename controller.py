@@ -14,7 +14,7 @@ class ControllerBase(metaclass=ABCMeta):
         pass
     
     @abstractmethod
-    def request_switch_turn(self, color):
+    def request_switch_turn(self):
         pass
     
     # TODO: A function to switch "Player vs Player" and "Player vs CPU"
@@ -25,7 +25,11 @@ class ControllerBase(metaclass=ABCMeta):
         pass
     
     @abstractmethod
-    def request_update_board(self, board_state):
+    def request_set_stones(self, coords, color):
+        pass
+    
+    @abstractmethod
+    def request_reverse_stones(self, coords):
         pass
     
     @abstractmethod
@@ -59,8 +63,11 @@ class Controller(ControllerBase):
         # TODO: Notify that the player cannot put a stone at the given coord.
         pass
 
-    def request_update_board(self, board_state):
-        # TODO: Update board display.
+    def request_set_stones(self, coords):
+        # TODO: Show the set stones.
+        pass
+
+    def request_reverse_stones(self, coords):
         pass
 
     def request_notify_need_pass(self):
