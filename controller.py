@@ -63,7 +63,7 @@ class Controller(ControllerBase):
         # TODO: Notify that the player cannot put a stone at the given coord.
         pass
 
-    def request_set_stones(self, coords):
+    def request_set_stones(self, coords, color):
         # TODO: Show the set stones.
         pass
 
