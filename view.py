@@ -50,12 +50,16 @@ class CanvasCoord:
 class View:
     def __init__(self):
         # Window
-        self.__WindowWidth = 500
-        self.__WindowHeight = 500
+        self.__WindowWidth = 1000
+        self.__WindowHeight = 800
 
         # Board
-        self.__BoardCoord = CanvasCoord(50, 50)
+        self.__BoardCoord = CanvasCoord(50, 200)
         self.__CellSize = 50
+
+        # Title
+        self.__TitleCoord = CanvasCoord(20, 10)
+        self.__TitleSize = 50
 
     def create_window(self):
         # ----- Window & Canvas config -----
@@ -67,7 +71,15 @@ class View:
                             height=self.__WindowHeight)
 
         canvas.grid(row = 0, column = 0)
-    
+
+        # ---- Title -----
+        canvas.create_text(
+            self.__TitleCoord.x,
+            self.__TitleCoord.y,
+            text='Reversi',
+            font=('', self.__TitleSize),
+            anchor='nw')
+
         # ----- Board -----
         canvas.create_rectangle(
             self.__BoardCoord.x,
