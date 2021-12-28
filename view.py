@@ -88,7 +88,7 @@ class View:
         menu.add_command(label='Switch the Mode', command=on_switch_button_clicked)
         menu_bar = tk.Menu(self.__window)
 
-    def get_canvas_coord_on_board(self, coord):
+    def coord_to_canvas_coord(self, coord):
         '''
         This function converts coordinate in the board (defined in core.py)
         to coordinate in the canvas (defined in view.py).
