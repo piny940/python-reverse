@@ -61,7 +61,7 @@ class View:
         self.__TitleCoord = CanvasCoord(20, 10)
         self.__TitleSize = 50
 
-    def set_menu_bar(self, window, current_mode):
+    def set_menu_bar(self, current_mode):
         '''
         This function renews the menu bar. This function has to be called
         when the game mode switches.
@@ -78,13 +78,13 @@ class View:
             #   Switch to CPU Mode
             pass
         
-        menu_bar = tk.Menu(window)
-        window.config(menu=menu_bar)
-        menu = tk.Menu(window)
+        menu_bar = tk.Menu(self.__window)
+        self.__window.config(menu=menu_bar)
+        menu = tk.Menu(self.__window)
         menu_bar.add_cascade(label='Menu', menu=menu)
         menu.add_command(label='New Game', command=on_new_game_button_clicked)
         menu.add_command(label='Switch the Mode', command=on_switch_button_clicked)
-        menu_bar = tk.Menu(window)
+        menu_bar = tk.Menu(self.__window)
 
     def get_canvas_coord_on_board(self, coord):
         x = self.__BoardCoord.x + self.__CellSize * (coord.get()[0])
@@ -93,17 +93,17 @@ class View:
 
     def create_window(self):
         # ----- Window & Canvas config -----
-        window = tk.Tk()
-        window.title("Reversi")
-        window.geometry(f"{self.__WindowWidth}x{self.__WindowHeight}")
+        self.__window = tk.Tk()
+        self.__window.title("Reversi")
+        self.__window.geometry(f"{self.__WindowWidth}x{self.__WindowHeight}")
 
-        canvas = tk.Canvas(window, width=self.__WindowWidth,
+        self.__canvas = tk.Canvas(self.__window, width=self.__WindowWidth,
                             height=self.__WindowHeight)
 
-        canvas.grid(row = 0, column = 0)
+        self.__canvas.grid(row = 0, column = 0)
 
         # ---- Title -----
-        canvas.create_text(
+        self.__canvas.create_text(
             self.__TitleCoord.x,
             self.__TitleCoord.y,
             text='Reversi',
@@ -114,7 +114,7 @@ class View:
         # TODO: self.set_menu_bar(window, mode)
 
         # ----- Board -----
-        canvas.create_rectangle(
+        self.__canvas.create_rectangle(
             self.__BoardCoord.x,
             self.__BoardCoord.y,
             self.__BoardCoord.x + self.__CellSize * 8,
@@ -123,7 +123,7 @@ class View:
 
         for i in range(9):
             # Vertical line
-            canvas.create_line(
+            self.__canvas.create_line(
                 self.__BoardCoord.x + i * self.__CellSize,
                 self.__BoardCoord.y,
                 self.__BoardCoord.x + i * self.__CellSize,
@@ -131,11 +131,11 @@ class View:
                 fill = 'black')
             
             # Horizontal line
-            canvas.create_line(
+            self.__canvas.create_line(
                 self.__BoardCoord.x,
                 self.__BoardCoord.y + i * self.__CellSize,
                 self.__BoardCoord.x + self.__CellSize * 8,
                 self.__BoardCoord.y + i * self.__CellSize,
                 fill = 'black')
     
-        window.mainloop()
+        self.__window.mainloop()
