@@ -57,6 +57,9 @@ class View:
         self.__BoardCoord = CanvasCoord(50, 200)
         self.__CellSize = 50
 
+        # Stone
+        self.__StoneRadius = 20
+
         # Title
         self.__TitleCoord = CanvasCoord(20, 10)
         self.__TitleSize = 50
@@ -93,9 +96,24 @@ class View:
         This function converts coordinate in the board (defined in core.py)
         to coordinate in the canvas (defined in view.py).
         '''
-        x = self.__BoardCoord.x + self.__CellSize * (coord.get()[0])
-        y = self.__BoardCoord.y + self.__CellSize * (coord.get()[1])
+        x = self.__BoardCoord.x + self.__CellSize * (coord.get()[0] + 0.5)
+        y = self.__BoardCoord.y + self.__CellSize * (coord.get()[1] + 0.5)
         return CanvasCoord(x, y)
+
+    def set_stone(self, coord, color):
+        pos = self.coord_to_canvas_coord(coord)
+        str_color = ''
+        if color == 0: # White stone
+            str_color = 'White'
+        elif color == 1: # Black stone
+            str_color = 'Black'
+
+        self.__canvas.create_oval(
+            pos.x - self.__StoneRadius,
+            pos.y - self.__StoneRadius,
+            pos.x + self.__StoneRadius,
+            pos.y + self.__StoneRadius,
+            fill=str_color)
 
     def create_window(self):
         '''
