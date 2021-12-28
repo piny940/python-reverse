@@ -80,6 +80,8 @@ class View:
         
         menu_bar = tk.Menu(self.__window)
         self.__window.config(menu=menu_bar)
+        
+        # Make contents of the menu bar.
         menu = tk.Menu(self.__window)
         menu_bar.add_cascade(label='Menu', menu=menu)
         menu.add_command(label='New Game', command=on_new_game_button_clicked)
@@ -87,11 +89,18 @@ class View:
         menu_bar = tk.Menu(self.__window)
 
     def get_canvas_coord_on_board(self, coord):
+        '''
+        This function converts coordinate in the board (defined in core.py)
+        to coordinate in the canvas (defined in view.py).
+        '''
         x = self.__BoardCoord.x + self.__CellSize * (coord.get()[0])
         y = self.__BoardCoord.y + self.__CellSize * (coord.get()[1])
         return CanvasCoord(x, y)
 
     def create_window(self):
+        '''
+        This function is supposed to be called when launching a game.
+        '''
         # ----- Window & Canvas config -----
         self.__window = tk.Tk()
         self.__window.title("Reversi")
