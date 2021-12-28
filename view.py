@@ -86,6 +86,11 @@ class View:
         menu.add_command(label='Switch the Mode', command=on_switch_button_clicked)
         menu_bar = tk.Menu(window)
 
+    def get_canvas_coord_on_board(self, coord):
+        x = self.__BoardCoord.x + self.__CellSize * (coord.get()[0])
+        y = self.__BoardCoord.y + self.__CellSize * (coord.get()[1])
+        return CanvasCoord(x, y)
+
     def create_window(self):
         # ----- Window & Canvas config -----
         window = tk.Tk()
