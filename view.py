@@ -61,6 +61,31 @@ class View:
         self.__TitleCoord = CanvasCoord(20, 10)
         self.__TitleSize = 50
 
+    def set_menu_bar(self, window, current_mode):
+        '''
+        This function renews the menu bar. This function has to be called
+        when the game mode switches.
+        '''
+        def on_new_game_button_clicked():
+            # TODO: Initialize the board.
+            pass
+
+        def on_switch_button_clicked():
+            # TODO: 
+            # if current_mode is 'CPU Mode':
+            #   Switch to Player Mode
+            # elif current_mode is 'Player Mode:
+            #   Switch to CPU Mode
+            pass
+        
+        menu_bar = tk.Menu(window)
+        window.config(menu=menu_bar)
+        menu = tk.Menu(window)
+        menu_bar.add_cascade(label='Menu', menu=menu)
+        menu.add_command(label='New Game', command=on_new_game_button_clicked)
+        menu.add_command(label='Switch the Mode', command=on_switch_button_clicked)
+        menu_bar = tk.Menu(window)
+
     def create_window(self):
         # ----- Window & Canvas config -----
         window = tk.Tk()
@@ -79,6 +104,9 @@ class View:
             text='Reversi',
             font=('', self.__TitleSize),
             anchor='nw')
+
+        # ----- Menu Bar -----
+        # TODO: self.set_menu_bar(window, mode)
 
         # ----- Board -----
         canvas.create_rectangle(
