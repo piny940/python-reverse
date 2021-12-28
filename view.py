@@ -48,32 +48,49 @@ class CanvasCoord:
 
 
 class View:
+    def __init__(self):
+        # Window
+        self.__WindowWidth = 500
+        self.__WindowHeight = 500
+
+        # Board
+        self.__BoardCoord = CanvasCoord(50, 50)
+        self.__CellSize = 50
+
     def create_window(self):
+        # ----- Window & Canvas config -----
         window = tk.Tk()
-
         window.title("Reversi")
-        window.geometry("500x500")
+        window.geometry(f"{self.__WindowWidth}x{self.__WindowHeight}")
 
-        canvas = tk.Canvas(window, width=500, height=500)
-        canvas.grid(row=0, column=0)
+        canvas = tk.Canvas(window, width=self.__WindowWidth,
+                            height=self.__WindowHeight)
 
-        CellSize = 50
-        BoardMargin = 50
+        canvas.grid(row = 0, column = 0)
     
-        canvas.create_line(250, 50, 250, 450, width=400, fill="green")
+        # ----- Board -----
+        canvas.create_rectangle(
+            self.__BoardCoord.x,
+            self.__BoardCoord.y,
+            self.__BoardCoord.x + self.__CellSize * 8,
+            self.__BoardCoord.y + self.__CellSize * 8,
+            fill = 'green')
+
         for i in range(9):
+            # Vertical line
             canvas.create_line(
-                BoardMargin + i * CellSize, 
-                BoardMargin,
-                BoardMargin + i * CellSize, 
-                CellSize * 8 + BoardMargin, 
-                fill = "black")
+                self.__BoardCoord.x + i * self.__CellSize,
+                self.__BoardCoord.y,
+                self.__BoardCoord.x + i * self.__CellSize,
+                self.__BoardCoord.y + self.__CellSize * 8,
+                fill = 'black')
             
+            # Horizontal line
             canvas.create_line(
-                BoardMargin, 
-                BoardMargin + i * CellSize,
-                CellSize * 8 + BoardMargin, 
-                BoardMargin + i * CellSize, 
-                fill = "black")
+                self.__BoardCoord.x,
+                self.__BoardCoord.y + i * self.__CellSize,
+                self.__BoardCoord.x + self.__CellSize * 8,
+                self.__BoardCoord.y + i * self.__CellSize,
+                fill = 'black')
     
         window.mainloop()
