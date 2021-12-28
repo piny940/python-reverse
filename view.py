@@ -5,7 +5,7 @@ class View:
     def create_window(self):
         window = tk.Tk()
 
-        window.title("Revrese")
+        window.title("Reversi")
         window.geometry("500x500")
 
         canvas = tk.Canvas(window, width=500, height=500)
