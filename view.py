@@ -79,10 +79,6 @@ class View:
         pass
 
     def set_menu_bar(self):
-        '''
-        This function renews the menu bar. This function has to be called
-        when the game mode switches.
-        '''
         menu_bar = tk.Menu(self.__window)
         self.__window.config(menu=menu_bar)
         
