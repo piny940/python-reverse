@@ -1,6 +1,7 @@
 import unittest as t
 import textwrap
 import core
+import view
 
 
 def trim_for_board(s):
@@ -452,3 +453,53 @@ class TestReversi(t.TestCase):
         r.proceed_to_next()
         # Black has no place to put stone, so they have to pass.
         self.assertEqual(r.get_player_color(), core.Stone.White)
+
+class TestCanvasCoord(t.TestCase):
+    def test_add(self):
+        c1 = view.CanvasCoord(-1, 2)
+        c2 = view.CanvasCoord(3, 4)
+        c3 = c1 + c2
+        self.assertEqual(c3.get(), (2, 6))
+
+    def test_sub(self):
+        c1 = view.CanvasCoord(3, 5)
+        c2 = view.CanvasCoord(-4, 5)
+        c3 = c1 - c2
+        c4 = c2 - c1
+        self.assertEqual(c3.get(), (7, 0))
+        self.assertEqual(c4.get(), (-7, 0))
+
+    def test_eq(self):
+        c1 = view.CanvasCoord(1, 2)
+        c2 = view.CanvasCoord(1, 2)
+        c3 = view.CanvasCoord(-1, 2)
+        self.assertTrue(c1 == c2)
+        self.assertFalse(c1 == c3)
+
+    def test_ne(self):
+        c1 = view.CanvasCoord(1, 2)
+        c2 = view.CanvasCoord(1, 2)
+        c3 = view.CanvasCoord(-1, 2)
+        self.assertFalse(c1 != c2)
+        self.assertTrue(c1 != c3)
+
+    def test_set(self):
+        c = view.CanvasCoord(1, 2)
+        c.set(view.CanvasCoord(2, 3))
+        self.assertEqual(c.get(), (2, 3))
+
+    def test_x(self):
+        c1 = view.CanvasCoord(1, 3)
+        c2 = view.CanvasCoord(0, 3)
+        self.assertEqual(c1.x, 1)
+
+        c2.x = 3
+        self.assertEqual(c2.x, 3)
+
+    def test_y(self):
+        c1 = view.CanvasCoord(1, 1)
+        c2 = view.CanvasCoord(0, 3)
+        self.assertEqual(c1.y, 1)
+
+        c2.y = 4
+        self.assertEqual(c2.y, 4)
