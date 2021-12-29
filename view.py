@@ -1,4 +1,5 @@
 import tkinter as tk
+from core import Stone, Coord, Board
 
 
 class CanvasCoord:
@@ -56,6 +57,7 @@ class View:
         # Board
         self.__BoardCoord = CanvasCoord(50, 200)
         self.__CellSize = 50
+        self.__board = Board()
 
         # Stone
         self.__StoneRadius = 20
@@ -101,11 +103,12 @@ class View:
         return CanvasCoord(x, y)
 
     def set_stone(self, coord, color):
+        self.__board.set_stone(coord, color)
         pos = self.coord_to_canvas_coord(coord)
         str_color = ''
-        if color == 0: # White stone
+        if color == Stone.White:
             str_color = 'White'
-        elif color == 1: # Black stone
+        elif color == Stone.Black:
             str_color = 'Black'
 
         self.__canvas.create_oval(
@@ -114,6 +117,14 @@ class View:
             pos.x + self.__StoneRadius,
             pos.y + self.__StoneRadius,
             fill=str_color)
+
+    def set_board(self, board):
+        '''
+        Set all the stones in the board.
+        '''
+        for x in range(Board.Size):
+            for y in range(Board.Size):
+                self.set_stone(Coord(x, y), board.get(x, y))
 
     def create_window(self):
         '''
