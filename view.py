@@ -126,6 +126,11 @@ class View:
             for y in range(Board.Size):
                 self.set_stone(Coord(x, y), board.get(x, y))
 
+    def reverse_stone(self, coord):
+        color = Stone.get_rival_stone_color(self.__board.get_stone(coord))
+        # You may add some animation here.
+        self.set_stone(coord, color)
+
     def create_window(self):
         '''
         This function is supposed to be called when launching a game.
