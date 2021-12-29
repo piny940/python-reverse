@@ -66,31 +66,33 @@ class View:
         self.__TitleCoord = CanvasCoord(20, 10)
         self.__TitleSize = 50
 
-    def set_menu_bar(self, current_mode):
+    def on_new_game_button_clicked():
+        # TODO: Initialize the board.
+        pass
+
+    def on_switch_button_clicked():
+        # TODO:
+        # if current_mode is 'CPU Mode':
+        #   Switch to Player Mode
+        # elif current_mode is 'Player Mode:
+        #   Switch to CPU Mode
+        pass
+
+    def set_menu_bar(self):
         '''
         This function renews the menu bar. This function has to be called
         when the game mode switches.
         '''
-        def on_new_game_button_clicked():
-            # TODO: Initialize the board.
-            pass
-
-        def on_switch_button_clicked():
-            # TODO: 
-            # if current_mode is 'CPU Mode':
-            #   Switch to Player Mode
-            # elif current_mode is 'Player Mode:
-            #   Switch to CPU Mode
-            pass
-        
         menu_bar = tk.Menu(self.__window)
         self.__window.config(menu=menu_bar)
         
         # Make contents of the menu bar.
         menu = tk.Menu(self.__window)
         menu_bar.add_cascade(label='Menu', menu=menu)
-        menu.add_command(label='New Game', command=on_new_game_button_clicked)
-        menu.add_command(label='Switch the Mode', command=on_switch_button_clicked)
+        menu.add_command(label='New Game',
+                            command = self.on_new_game_button_clicked)
+        menu.add_command(label='Switch the Mode',
+                            command = self.on_switch_button_clicked)
         menu_bar = tk.Menu(self.__window)
 
     def coord_to_canvas_coord(self, coord):
@@ -98,8 +100,10 @@ class View:
         This function converts coordinate in the board (defined in core.py)
         to coordinate in the canvas (defined in view.py).
         '''
-        x = self.__BoardCoord.x + self.__CellSize * (coord.get()[0] + 0.5)
-        y = self.__BoardCoord.y + self.__CellSize * (coord.get()[1] + 0.5)
+        (coord_x, coord_y) = coord.get()
+        # '0.5' has to be added to express the coords of the center of a cell.
+        x = self.__BoardCoord.x + self.__CellSize * (coord_x + 0.5)
+        y = self.__BoardCoord.y + self.__CellSize * (coord_y + 0.5)
         return CanvasCoord(x, y)
 
     def set_stone(self, coord, color):
@@ -116,7 +120,7 @@ class View:
             pos.y - self.__StoneRadius,
             pos.x + self.__StoneRadius,
             pos.y + self.__StoneRadius,
-            fill=str_color)
+            fill = str_color)
 
     def set_board(self, board):
         '''
@@ -175,5 +179,5 @@ class View:
                 self.__BoardCoord.x + self.__CellSize * 8,
                 self.__BoardCoord.y + i * self.__CellSize,
                 fill = 'black')
-    
+
         self.__window.mainloop()
