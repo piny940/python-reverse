@@ -124,7 +124,7 @@ class View:
         '''
         for x in range(Board.Size):
             for y in range(Board.Size):
-                self.set_stone(Coord(x, y), board.get(x, y))
+                self.set_stone(Coord(x, y), board.get_stone(x, y))
 
     def reverse_stone(self, coord):
         color = Stone.get_rival_stone_color(self.__board.get_stone(coord))
