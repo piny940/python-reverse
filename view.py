@@ -78,18 +78,18 @@ class View:
         #   Switch to CPU Mode
         pass
 
-    def set_menu_bar(self):
-        menu_bar = tk.Menu(self.__window)
-        self.__window.config(menu=menu_bar)
+    def set_menu_bar(self, window):
+        menu_bar = tk.Menu(window)
+        window.config(menu=menu_bar)
         
         # Make contents of the menu bar.
-        menu = tk.Menu(self.__window)
+        menu = tk.Menu(window)
         menu_bar.add_cascade(label='Menu', menu=menu)
         menu.add_command(label='New Game',
                             command = self.on_new_game_button_clicked)
         menu.add_command(label='Switch the Mode',
                             command = self.on_switch_button_clicked)
-        menu_bar = tk.Menu(self.__window)
+        menu_bar = tk.Menu(window)
 
     def coord_to_canvas_coord(self, coord):
         '''
@@ -102,7 +102,7 @@ class View:
         y = self.__BoardCoord.y + self.__CellSize * (coord_y + 0.5)
         return CanvasCoord(x, y)
 
-    def set_stone(self, coord, color):
+    def set_stone(self, canvas, coord, color):
         self.__board.set_stone(coord, color)
         pos = self.coord_to_canvas_coord(coord)
         str_color = ''
@@ -111,25 +111,26 @@ class View:
         elif color == Stone.Black:
             str_color = 'Black'
 
-        self.__canvas.create_oval(
+        canvas.create_oval(
             pos.x - self.__StoneRadius,
             pos.y - self.__StoneRadius,
             pos.x + self.__StoneRadius,
             pos.y + self.__StoneRadius,
             fill = str_color)
 
-    def set_board(self, board):
+    def set_board(self, canvas, board):
         '''
         Set all the stones in the board.
         '''
         for x in range(Board.Size):
             for y in range(Board.Size):
-                self.set_stone(Coord(x, y), board.get_stone(Coord(x, y)))
+                coord = Coord(x, y)
+                self.set_stone(canvas, coord, board.get_stone(coord))
 
-    def reverse_stone(self, coord):
+    def reverse_stone(self, canvas, coord):
         color = Stone.get_rival_stone_color(self.__board.get_stone(coord))
         # You may add some animation here.
-        self.set_stone(coord, color)
+        self.set_stone(canvas, coord, color)
 
     def create_window(self):
         '''
