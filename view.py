@@ -66,11 +66,11 @@ class View:
         self.__TitleCoord = CanvasCoord(20, 10)
         self.__TitleSize = 50
 
-    def on_new_game_button_clicked():
+    def on_new_game_button_clicked(self):
         # TODO: Initialize the board.
         pass
 
-    def on_switch_button_clicked():
+    def on_switch_button_clicked(self):
         # TODO:
         # if current_mode is 'CPU Mode':
         #   Switch to Player Mode
