@@ -66,8 +66,8 @@ class Controller(ControllerBase):
         pass
 
     def request_set_stones(self, coords, color):
-        # TODO: Show the set stones.
-        pass
+        for coord in coords:
+            self.__view.set_stone(coord, color)
 
     def request_reverse_stones(self, coords):
         pass

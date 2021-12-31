@@ -73,7 +73,7 @@ class View:
 
     def canvas_coord_to_coord(self, canvas_coord):
         if not self.is_coord_on_board(canvas_coord):
-            #TODO: エラー処理の仕方が分からん。
+            # TODO: Probably need to change here.
             messagebox.showerror(
                 'Out of Range Error',
                 '''
@@ -127,13 +127,14 @@ class View:
                 <= self.__BoardCoord.y + self.__CellSize * 8
         )
 
-    def on_board_clicked(self, event):
-        pass
+    def on_board_clicked(self, canvas_coord):
+        coord = self.canvas_coord_to_coord(canvas_coord)
+        self.__controller.request_try_put_stone(coord)
     
     def on_canvas_clicked(self, event):
-        c = CanvasCoord(event.x, event.y)
-        print(self.is_coord_on_board(c))
-        self.canvas_coord_to_coord(c)
+        canvas_coord = CanvasCoord(event.x, event.y)
+        if self.is_coord_on_board(canvas_coord):
+            self.on_board_clicked(canvas_coord)
 
     def create_window(self, initial_board):
         '''
