@@ -104,6 +104,10 @@ class View:
             pos.y + self.__StoneRadius,
             fill = str_color)
 
+    def set_stones(self, coords, color):
+        for coord in coords:
+            self.set_stone(coord, color)
+
     def set_board(self, board):
         '''
         Set all the stones in the board.
@@ -117,6 +121,10 @@ class View:
         color = Stone.get_rival_stone_color(self.__board.get_stone(coord))
         # You may add some animation here.
         self.set_stone(coord, color)
+
+    def reverse_stones(self, coords):
+        for coord in coords:
+            self.reverse_stone(coord)
 
     def is_coord_on_board(self, canvas_coord):
         return (

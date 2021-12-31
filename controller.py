@@ -45,7 +45,7 @@ class Controller(ControllerBase):
         pass
     
     def __init__(self):
-        self.__reversi = Reversi()
+        self.__reversi = Reversi(self)
         self.__view = View(self)
     
     # ----- Functions to be called in view.py -----
@@ -66,11 +66,10 @@ class Controller(ControllerBase):
         pass
 
     def request_set_stones(self, coords, color):
-        for coord in coords:
-            self.__view.set_stone(coord, color)
+        self.__view.set_stones(coords, color)
 
     def request_reverse_stones(self, coords):
-        pass
+        self.__view.reverse_stones(coords)
 
     def request_notify_need_pass(self):
         # TODO: Notify that the player need to pass.
