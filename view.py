@@ -47,10 +47,10 @@ class View:
         #   Switch to CPU Mode
         pass
 
-    def set_menu_bar(self, window):
-        main_menu = tk.Menu(window)
+    def set_menu_bar(self):
+        main_menu = tk.Menu(self.__window)
         sub_menu = tk.Menu(main_menu, tearoff = 0)
-        window.config(menu = main_menu)
+        self.__window.config(menu = main_menu)
         main_menu.add_cascade(label = "Menu", menu = sub_menu)
         sub_menu.add_command(label = "New game", 
                             command = self.on_new_game_button_clicked)
@@ -68,7 +68,7 @@ class View:
         y = self.__BoardCoord.y + self.__CellSize * (coord_y + 0.5)
         return CanvasCoord(x, y)
 
-    def set_stone(self, canvas, coord, color):
+    def set_stone(self, coord, color):
         self.__board.set_stone(coord, color)
         pos = self.coord_to_canvas_coord(coord)
         str_color = ''
@@ -77,26 +77,26 @@ class View:
         elif color == Stone.Black:
             str_color = 'Black'
 
-        canvas.create_oval(
+        self.__canvas.create_oval(
             pos.x - self.__StoneRadius,
             pos.y - self.__StoneRadius,
             pos.x + self.__StoneRadius,
             pos.y + self.__StoneRadius,
             fill = str_color)
 
-    def set_board(self, canvas, board):
+    def set_board(self, board):
         '''
         Set all the stones in the board.
         '''
         for x in range(Board.Size):
             for y in range(Board.Size):
                 coord = Coord(x, y)
-                self.set_stone(canvas, coord, board.get_stone(coord))
+                self.set_stone(self.__canvas, coord, board.get_stone(coord))
 
-    def reverse_stone(self, canvas, coord):
+    def reverse_stone(self, coord):
         color = Stone.get_rival_stone_color(self.__board.get_stone(coord))
         # You may add some animation here.
-        self.set_stone(canvas, coord, color)
+        self.set_stone(coord, color)
 
     def create_window(self):
         '''
