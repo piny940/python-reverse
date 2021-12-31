@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 from core import Stone, Coord, Board
 
 
@@ -70,6 +71,21 @@ class View:
         y = self.__BoardCoord.y + self.__CellSize * (coord_y + 0.5)
         return CanvasCoord(x, y)
 
+    def canvas_coord_to_coord(self, canvas_coord):
+        if not self.is_coord_on_board(canvas_coord):
+            #TODO: エラー処理の仕方が分からん。
+            messagebox.showerror(
+                'Out of Range Error',
+                '''
+                Out of Range Error: view/View/canvas_coord_to_coord
+                The given coordinate is outside of the board.
+                ''')
+            return Coord(0, 0)
+        
+        x = (canvas_coord.x - self.__BoardCoord.x) // self.__CellSize
+        y = (canvas_coord.y - self.__BoardCoord.y) // self.__CellSize
+        return (x, y)
+
     def set_stone(self, coord, color):
         self.__board.set_stone(coord, color)
         pos = self.coord_to_canvas_coord(coord)
@@ -102,6 +118,23 @@ class View:
         # You may add some animation here.
         self.set_stone(coord, color)
 
+    def is_coord_on_board(self, canvas_coord):
+        return (
+            self.__BoardCoord.x <= canvas_coord.x 
+                <= self.__BoardCoord.x + self.__CellSize * 8
+            and
+            self.__BoardCoord.y <= canvas_coord.y
+                <= self.__BoardCoord.y + self.__CellSize * 8
+        )
+
+    def on_board_clicked(self, event):
+        pass
+    
+    def on_canvas_clicked(self, event):
+        c = CanvasCoord(event.x, event.y)
+        print(self.is_coord_on_board(c))
+        self.canvas_coord_to_coord(c)
+
     def create_window(self, initial_board):
         '''
         This function is supposed to be called when launching a game.
@@ -115,6 +148,7 @@ class View:
                             height=self.__WindowHeight)
 
         self.__canvas.grid(row = 0, column = 0)
+        self.__canvas.bind('<ButtonPress-1>', self.on_canvas_clicked)
 
         # ---- Title -----
         self.__canvas.create_text(
