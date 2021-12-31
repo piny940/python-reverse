@@ -121,7 +121,7 @@ class View:
             anchor='nw')
 
         # ----- Menu Bar -----
-        self.set_menu_bar(self.__window)
+        self.set_menu_bar()
 
         # ----- Board -----
         self.__canvas.create_rectangle(
