@@ -33,6 +33,7 @@ class View:
         # Title
         self.__TitleCoord = CanvasCoord(20, 10)
         self.__TitleSize = 50
+        self.__TitleFont = 'Times'
 
     def on_new_game_button_clicked(self):
         # TODO: Initialize the board.
@@ -116,7 +117,7 @@ class View:
             self.__TitleCoord.x,
             self.__TitleCoord.y,
             text='Reversi',
-            font=('', self.__TitleSize),
+            font=(self.__TitleFont, self.__TitleSize),
             anchor='nw')
 
         # ----- Menu Bar -----
