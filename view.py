@@ -17,7 +17,9 @@ class CanvasCoord(Coord):
         return value
 
 class View:
-    def __init__(self):
+    def __init__(self, controller):
+        self.__controller = controller
+        
         # Window
         self.__WindowWidth = 1000
         self.__WindowHeight = 800
