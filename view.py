@@ -47,17 +47,14 @@ class View:
         pass
 
     def set_menu_bar(self, window):
-        menu_bar = tk.Menu(window)
-        window.config(menu=menu_bar)
-        
-        # Make contents of the menu bar.
-        menu = tk.Menu(window)
-        menu_bar.add_cascade(label='Menu', menu=menu)
-        menu.add_command(label='New Game',
+        main_menu = tk.Menu(window)
+        sub_menu = tk.Menu(main_menu, tearoff = 0)
+        window.config(menu = main_menu)
+        main_menu.add_cascade(label = "Menu", menu = sub_menu)
+        sub_menu.add_command(label = "New game", 
                             command = self.on_new_game_button_clicked)
-        menu.add_command(label='Switch the Mode',
+        sub_menu.add_command(label = "Switch mode", 
                             command = self.on_switch_button_clicked)
-        menu_bar = tk.Menu(window)
 
     def coord_to_canvas_coord(self, coord):
         '''
@@ -123,7 +120,7 @@ class View:
             anchor='nw')
 
         # ----- Menu Bar -----
-        # TODO: self.set_menu_bar(window, mode)
+        self.set_menu_bar(self.__window)
 
         # ----- Board -----
         self.__canvas.create_rectangle(
