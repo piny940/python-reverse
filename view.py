@@ -84,7 +84,7 @@ class View:
         
         x = (canvas_coord.x - self.__BoardCoord.x) // self.__CellSize
         y = (canvas_coord.y - self.__BoardCoord.y) // self.__CellSize
-        return (x, y)
+        return Coord(x, y)
 
     def set_stone(self, coord, color):
         self.__board.set_stone(coord, color)
