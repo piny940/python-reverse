@@ -78,6 +78,8 @@ class View:
             str_color = 'White'
         elif color == Stone.Black:
             str_color = 'Black'
+        else:
+            return
 
         self.__canvas.create_oval(
             pos.x - self.__StoneRadius,
@@ -100,7 +102,7 @@ class View:
         # You may add some animation here.
         self.set_stone(coord, color)
 
-    def create_window(self):
+    def create_window(self, initial_board):
         '''
         This function is supposed to be called when launching a game.
         '''
@@ -149,5 +151,8 @@ class View:
                 self.__BoardCoord.x + self.__CellSize * 8,
                 self.__BoardCoord.y + i * self.__CellSize,
                 fill = 'black')
+        
+        # ----- Stones -----
+        self.set_board(initial_board)
 
         self.__window.mainloop()

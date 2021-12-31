@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from core import Reversi
+from view import View
 
 
 class ControllerBase(metaclass=ABCMeta):
@@ -39,12 +40,13 @@ class ControllerBase(metaclass=ABCMeta):
 
 class Controller(ControllerBase):
     def main(self):
-        # TODO: Launch the game.
+        initial_board = self.__reversi.get_board()
+        self.__view.create_window(initial_board)
         pass
     
     def __init__(self):
         self.__reversi = Reversi()
-        # TODO: Instantiate view object.
+        self.__view = View(self)
     
     # ----- Functions to be called in view.py -----
     def request_initialize_board(self):
