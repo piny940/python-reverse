@@ -100,7 +100,7 @@ class View:
             fill = 'Green',
             outline = 'Green')
 
-    def set_stone(self, coord, color):
+    def update_stone(self, coord, color):
         self.__board.set_stone(coord, color)
         pos = self.coord_to_canvas_coord(coord)
         str_color = ''
@@ -119,23 +119,23 @@ class View:
             pos.y + self.__StoneRadius,
             fill = str_color)
 
-    def set_stones(self, coords, color):
+    def update_stones(self, coords, color):
         for coord in coords:
-            self.set_stone(coord, color)
+            self.update_stone(coord, color)
 
     def set_board(self, board):
         '''
-        Set all the stones in the board.
+        Update all the stones in the board.
         '''
         for x in range(Board.Size):
             for y in range(Board.Size):
                 coord = Coord(x, y)
-                self.set_stone(coord, board.get_stone(coord))
+                self.update_stone(coord, board.get_stone(coord))
 
     def reverse_stone(self, coord):
         color = Stone.get_rival_stone_color(self.__board.get_stone(coord))
         # You may add some animation here.
-        self.set_stone(coord, color)
+        self.update_stone(coord, color)
 
     def reverse_stones(self, coords):
         for coord in coords:

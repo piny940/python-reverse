@@ -26,7 +26,7 @@ class ControllerBase(metaclass=ABCMeta):
         pass
     
     @abstractmethod
-    def request_set_stones(self, coords, color):
+    def request_update_stones(self, coords, color):
         pass
     
     @abstractmethod
@@ -66,8 +66,8 @@ class Controller(ControllerBase):
         # TODO: Notify that the player cannot put a stone at the given coord.
         pass
 
-    def request_set_stones(self, coords, color):
-        self.__view.set_stones(coords, color)
+    def request_update_stones(self, coords, color):
+        self.__view.update_stones(coords, color)
 
     def request_reverse_stones(self, coords):
         self.__view.reverse_stones(coords)
