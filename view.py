@@ -164,6 +164,7 @@ class View:
         canvas_coord = CanvasCoord(event.x, event.y)
         if self.is_coord_on_board(canvas_coord):
             self.on_board_clicked(canvas_coord)
+            return
 
     def set_stone_counts(self, stone_counts):
         '''
