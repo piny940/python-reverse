@@ -6,7 +6,6 @@ from view import View
 class ControllerBase(metaclass=ABCMeta):
     # ----- Functions to be called in view.py -----
     @abstractmethod
-    # This function is suppoed to return initial board state.
     def request_initialize_board(self):
         pass
     
@@ -36,17 +35,15 @@ class ControllerBase(metaclass=ABCMeta):
     @abstractmethod
     def request_notify_need_pass(self):
         pass
-
+    
+    @abstractmethod
+    def request_update_stone_count(self, stone_counts):
+        pass
 
 class Controller(ControllerBase):
     def main(self):
         board = self.__reversi.get_board()
-        white = self.__reversi.get_board().get_white_stones_count()
-        black = self.__reversi.get_board().get_black_stones_count()
-        stone_counts = {
-            Stone.White: white,
-            Stone.Black: black,
-        }
+        stone_counts = self.__reversi.get_stone_counts()
         self.__view.create_window(board, stone_counts)
     
     def __init__(self):
@@ -57,7 +54,9 @@ class Controller(ControllerBase):
     def request_initialize_board(self):
         self.__reversi.init_state()
         board = self.__reversi.get_board()
+        stone_counts = self.__reversi.get_stone_counts()
         self.__view.set_board(board)
+        self.__view.set_stone_counts(stone_counts)
 
     def request_try_put_stone(self, coord):
         self.__reversi.put_stone(coord)
