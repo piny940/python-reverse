@@ -75,3 +75,10 @@ class Controller(ControllerBase):
     def request_notify_need_pass(self):
         # TODO: Notify that the player need to pass.
         pass
+
+    def request_update_stone_count(self, dict_counts):
+        '''
+        The argument 'dict_counts' is supposed to be a dictionary
+        with keys 'Stone.White' (= 0) and 'Stone.Black' (= 1).
+        '''
+        pass
