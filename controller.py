@@ -77,8 +77,7 @@ class Controller(ControllerBase):
         self.__view.reverse_stones(coords)
 
     def request_notify_need_pass(self):
-        # TODO: Notify that the player need to pass.
-        pass
+        self.__view.notify_need_pass()
 
     def request_update_stone_count(self, stone_counts):
         self.__view.update_stone_counts(stone_counts)

@@ -196,6 +196,9 @@ class View:
         self.__white_stone_counts_text.set(f'White: {stone_counts[Stone.White]}')
         self.__black_stone_counts_text.set(f'Black: {stone_counts[Stone.Black]}')
 
+    def notify_need_pass(self):
+        messagebox.showinfo('Need pass', 'You need to pass')
+
     def create_window(self, initial_board, initial_stone_counts):
         '''
         This function is supposed to be called when launching a game.
