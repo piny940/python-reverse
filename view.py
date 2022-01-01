@@ -39,8 +39,7 @@ class View:
         self.__TitleFont = 'Times'
 
     def on_new_game_button_clicked(self):
-        # TODO: Initialize the board.
-        pass
+        self.__controller.request_initialize_board()
 
     def on_switch_button_clicked(self):
         # TODO:
@@ -86,6 +85,21 @@ class View:
         y = (canvas_coord.y - self.__BoardCoord.y) // self.__CellSize
         return Coord(x, y)
 
+    def make_cell_empty(self, coord):
+        '''
+        Draw a green square that covers the stone circle.
+        The length of one side of the square is the average of
+        the size of the cell and the diameter of the circle.
+        '''
+        size = (self.__CellSize + self.__StoneRadius * 2) / 2
+        diff = CanvasCoord(-size / 2, -size / 2)
+        pos = self.coord_to_canvas_coord(coord) + diff
+        self.__canvas.create_rectangle(
+            pos.x, pos.y,
+            pos.x + size, pos.y + size,
+            fill = 'Green',
+            outline = 'Green')
+
     def set_stone(self, coord, color):
         self.__board.set_stone(coord, color)
         pos = self.coord_to_canvas_coord(coord)
@@ -95,6 +109,7 @@ class View:
         elif color == Stone.Black:
             str_color = 'Black'
         else:
+            self.make_cell_empty(coord)
             return
 
         self.__canvas.create_oval(

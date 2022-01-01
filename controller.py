@@ -50,8 +50,9 @@ class Controller(ControllerBase):
     
     # ----- Functions to be called in view.py -----
     def request_initialize_board(self):
-        # TODO: Instantiate board state.
-        pass
+        self.__reversi.init_state()
+        board = self.__reversi.get_board()
+        self.__view.set_board(board)
 
     def request_try_put_stone(self, coord):
         self.__reversi.put_stone(coord)
