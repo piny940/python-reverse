@@ -44,7 +44,9 @@ class Controller(ControllerBase):
     def main(self):
         board = self.__reversi.get_board()
         stone_counts = self.__reversi.get_stone_counts()
-        self.__view.create_window(board, stone_counts)
+        # TODO: Get the coords of the cells to be highlighted
+        highlight = [[]] #TODO
+        self.__view.create_window(board, stone_counts, highlight)
     
     def __init__(self):
         self.__reversi = Reversi(self)
@@ -77,7 +79,9 @@ class Controller(ControllerBase):
         self.__view.reverse_stones(coords)
 
     def request_notify_need_pass(self):
-        self.__view.notify_need_pass()
+        # TODO: Get the coords of the cells to be highlighted
+        highlight = [[]] #TODO
+        self.__view.notify_need_pass(highlight)
 
     def request_update_stone_count(self, stone_counts):
         self.__view.update_stone_counts(stone_counts)
