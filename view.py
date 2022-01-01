@@ -37,6 +37,12 @@ class View:
         self.__TitleCoord = CanvasCoord(20, 10)
         self.__TitleSize = 50
         self.__TitleFont = 'Times'
+        
+        # Stone Counts Label
+        self.__WhiteStoneCountsLabelCoord = CanvasCoord(600, 400)
+        self.__BlackStoneCountsLabelCoord = CanvasCoord(600, 450)
+        self.__StoneCountsLabelSize = 25
+        self.__StoneCountsLabelFont = 'Times'
 
     def on_new_game_button_clicked(self):
         self.__controller.request_initialize_board()
@@ -159,7 +165,38 @@ class View:
         if self.is_coord_on_board(canvas_coord):
             self.on_board_clicked(canvas_coord)
 
-    def create_window(self, initial_board):
+    def set_stone_counts(self, stone_counts):
+        '''
+        The argument 'stone_counts' is supposed to be a dictionary
+        with keys 'Stone.White' (= 0) and 'Stone.Black' (= 1).
+        '''
+        # White stone counts
+        self.__white_stone_counts_text = tk.StringVar()
+        self.__white_stone_counts_label = tk.Label(
+            self.__window,
+            font = f'{self.__StoneCountsLabelFont} {self.__StoneCountsLabelSize}',
+            textvariable = self.__white_stone_counts_text)
+        self.__white_stone_counts_label.place(
+            x = self.__WhiteStoneCountsLabelCoord.x,
+            y = self.__WhiteStoneCountsLabelCoord.y)
+        
+        # Black stone counts
+        self.__black_stone_counts_text = tk.StringVar()
+        self.__black_stone_counts_label = tk.Label(
+            self.__window,
+            font = f'{self.__StoneCountsLabelFont} {self.__StoneCountsLabelSize}',
+            textvariable = self.__black_stone_counts_text)
+        self.__black_stone_counts_label.place(
+            x = self.__BlackStoneCountsLabelCoord.x,
+            y = self.__BlackStoneCountsLabelCoord.y)
+        
+        self.update_stone_counts(stone_counts)
+        
+    def update_stone_counts(self, stone_counts):
+        self.__white_stone_counts_text.set(f'White: {stone_counts[Stone.White]}')
+        self.__black_stone_counts_text.set(f'Black: {stone_counts[Stone.Black]}')
+
+    def create_window(self, initial_board, initial_stone_counts):
         '''
         This function is supposed to be called when launching a game.
         '''
@@ -212,5 +249,8 @@ class View:
         
         # ----- Stones -----
         self.set_board(initial_board)
+        
+        # ----- Stone counts -----
+        self.set_stone_counts(initial_stone_counts)
 
         self.__window.mainloop()

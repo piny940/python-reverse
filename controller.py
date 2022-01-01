@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from core import Reversi
+from core import Reversi, Stone
 from view import View
 
 
@@ -40,9 +40,14 @@ class ControllerBase(metaclass=ABCMeta):
 
 class Controller(ControllerBase):
     def main(self):
-        initial_board = self.__reversi.get_board()
-        self.__view.create_window(initial_board)
-        pass
+        board = self.__reversi.get_board()
+        white = self.__reversi.get_board().get_white_stones_count()
+        black = self.__reversi.get_board().get_black_stones_count()
+        stone_counts = {
+            Stone.White: white,
+            Stone.Black: black,
+        }
+        self.__view.create_window(board, stone_counts)
     
     def __init__(self):
         self.__reversi = Reversi(self)
@@ -76,9 +81,5 @@ class Controller(ControllerBase):
         # TODO: Notify that the player need to pass.
         pass
 
-    def request_update_stone_count(self, dict_counts):
-        '''
-        The argument 'dict_counts' is supposed to be a dictionary
-        with keys 'Stone.White' (= 0) and 'Stone.Black' (= 1).
-        '''
-        pass
+    def request_update_stone_count(self, stone_counts):
+        self.__view.update_stone_counts(stone_counts)
