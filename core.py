@@ -203,8 +203,13 @@ class Reversi:
         Coord(1, -1),
     ]
 
+    class PlayMode:
+        VsPlayer = 0
+        VsCPU = 1
+
     def __init__(self):
         self.__board = Board()
+        self.__play_mode = Reversi.PlayMode.VsPlayer
         self.init_state()
 
     def init_state(self):
@@ -366,6 +371,12 @@ class Reversi:
                 if self.can_put_here(c, color):
                     puttable_coords.append(c)
         return puttable_coords
+
+    def set_play_mode(self, mode):
+        self.__play_mode = mode
+
+    def get_play_mode(self):
+        return self.__play_mode
 
     def get_player_color(self):
         return self.__player_color
