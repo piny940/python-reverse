@@ -142,6 +142,9 @@ class Board:
     def get_black_stones_count(self):
         return self.__stones_count[Stone.Black]
 
+    def get_stones_counts(self):
+        return copy.copy(self.__stones_count)
+
     # Stringify the board, convenient for debugging.
     def __str__(self):
         visualized = ''
