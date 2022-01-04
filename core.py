@@ -356,6 +356,17 @@ class Reversi:
         # If the next player can put stone nowhere, reaches here.
         # TODO: Notify
 
+    def get_puttable_coords(self, color = None):
+        if color is None:
+            color = self.get_player_color()
+        puttable_coords = []
+        for y in range(Board.Size):
+            for x in range(Board.Size):
+                c = Coord(x, y)
+                if self.can_put_here(c, color):
+                    puttable_coords.append(c)
+        return puttable_coords
+
     def get_player_color(self):
         return self.__player_color
 
