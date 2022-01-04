@@ -1,2 +1,2 @@
 test:
-	python -m unittest discover tests -v
+	python3 -m unittest discover tests -v
