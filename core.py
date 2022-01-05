@@ -142,6 +142,9 @@ class Board:
     def get_black_stones_count(self):
         return self.__stones_count[Stone.Black]
 
+    def get_stones_counts(self):
+        return copy.copy(self.__stones_count)
+
     # Stringify the board, convenient for debugging.
     def __str__(self):
         visualized = ''
@@ -203,8 +206,13 @@ class Reversi:
         Coord(1, -1),
     ]
 
+    class PlayMode:
+        VsPlayer = 0
+        VsCPU = 1
+
     def __init__(self):
         self.__board = Board()
+        self.__play_mode = Reversi.PlayMode.VsPlayer
         self.init_state()
 
     def init_state(self):
@@ -355,6 +363,23 @@ class Reversi:
                     return
         # If the next player can put stone nowhere, reaches here.
         # TODO: Notify
+
+    def get_puttable_coords(self, color = None):
+        if color is None:
+            color = self.get_player_color()
+        puttable_coords = []
+        for y in range(Board.Size):
+            for x in range(Board.Size):
+                c = Coord(x, y)
+                if self.can_put_here(c, color):
+                    puttable_coords.append(c)
+        return puttable_coords
+
+    def set_play_mode(self, mode):
+        self.__play_mode = mode
+
+    def get_play_mode(self):
+        return self.__play_mode
 
     def get_player_color(self):
         return self.__player_color

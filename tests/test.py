@@ -452,7 +452,7 @@ class TestReversi(t.TestCase):
         r.proceed_to_next()
         self.assertEqual(r.get_player_color(), core.Stone.Black)
 
-    def text_proceed_to_next_2(self):
+    def test_proceed_to_next_2(self):
         r = core.Reversi()
         self.assertEqual(r.get_player_color(), core.Stone.White)
         r.get_board().set_entire(board_string_to_matrix('''
@@ -468,3 +468,26 @@ class TestReversi(t.TestCase):
         r.proceed_to_next()
         # Black has no place to put stone, so they have to pass.
         self.assertEqual(r.get_player_color(), core.Stone.White)
+
+    def test_get_puttable_coords(self):
+        r = core.Reversi()
+        r.get_board().set_entire(board_string_to_matrix('''
+            ........
+            ........
+            .*****..
+            .*xxx*..
+            .*xox*..
+            .*xxx*..
+            .*****..
+            ........
+        '''))
+        self.assertEqual(r.get_puttable_coords(core.Stone.White), [
+            core.Coord(1, 2),
+            core.Coord(3, 2),
+            core.Coord(5, 2),
+            core.Coord(1, 4),
+            core.Coord(5, 4),
+            core.Coord(1, 6),
+            core.Coord(3, 6),
+            core.Coord(5, 6),
+        ])
