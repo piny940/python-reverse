@@ -37,16 +37,15 @@ class ControllerBase(metaclass=ABCMeta):
         pass
     
     @abstractmethod
-    def request_update_stone_count(self, stone_counts):
+    def request_update_stones_counts(self, stone_counts):
         pass
 
 class Controller(ControllerBase):
     def main(self):
         board = self.__reversi.get_board()
-        stone_counts = self.__reversi.get_stone_counts()
-        # TODO: Get the coords of the cells to be highlighted
-        highlight = [[]] #TODO
-        self.__view.create_window(board, stone_counts, highlight)
+        stone_counts = board.get_stones_counts()
+        cells_to_highlight = [] # TODO: Get the coords of the cells to highlight
+        self.__view.create_window(board, stone_counts, cells_to_highlight)
     
     def __init__(self):
         self.__reversi = Reversi(self)
@@ -56,9 +55,9 @@ class Controller(ControllerBase):
     def request_initialize_board(self):
         self.__reversi.init_state()
         board = self.__reversi.get_board()
-        stone_counts = self.__reversi.get_stone_counts()
+        stone_counts = board.get_stones_counts()
         self.__view.set_board(board)
-        self.__view.set_stone_counts(stone_counts)
+        self.__view.set_stones_counts(stone_counts)
 
     def request_try_put_stone(self, coord):
         self.__reversi.put_stone(coord)
@@ -79,9 +78,8 @@ class Controller(ControllerBase):
         self.__view.reverse_stones(coords)
 
     def request_notify_need_pass(self):
-        # TODO: Get the coords of the cells to be highlighted
-        highlight = [[]] #TODO
-        self.__view.notify_need_pass(highlight)
+        cells_to_highlight = [] # TODO: Get the coords of the cells to highlight
+        self.__view.notify_need_pass(cells_to_highlight)
 
-    def request_update_stone_count(self, stone_counts):
+    def request_update_stones_counts(self, stone_counts):
         self.__view.update_stone_counts(stone_counts)

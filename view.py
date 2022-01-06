@@ -78,98 +78,79 @@ class View:
 
     def canvas_coord_to_coord(self, canvas_coord):
         if not self.is_coord_on_board(canvas_coord):
-            # TODO: Probably need to change here.
-            messagebox.showerror(
-                'Out of Range Error',
-                '''
-                Out of Range Error: view/View/canvas_coord_to_coord
-                The given coordinate is outside of the board.
-                ''')
-            return Coord(0, 0)
+            '''
+            Convert a coord on canvas to the corresponding coord on reversi board.
+            canvas_coord must point inside of the reversi board.
+            If not, this function raises an exception.
+            '''
+            raise BaseException()
         
         x = (canvas_coord.x - self.__BoardCoord.x) // self.__CellSize
         y = (canvas_coord.y - self.__BoardCoord.y) // self.__CellSize
         return Coord(x, y)
 
-    def make_cell_empty(self, coord):
-        '''
-        Draw a green square that covers the stone circle.
-        The length of one side of the square is the average of
-        the size of the cell and the diameter of the circle.
-        '''
-        size = (self.__CellSize + self.__StoneRadius * 2) / 2
-        diff = CanvasCoord(-size / 2, -size / 2)
-        pos = self.coord_to_canvas_coord(coord) + diff
-        self.__canvas.create_rectangle(
-            pos.x, pos.y,
-            pos.x + size, pos.y + size,
-            fill = 'Green',
-            outline = 'Green')
-
-    def update_stone(self, coord, color):
-        self.__board.set_stone(coord, color)
-        pos = self.coord_to_canvas_coord(coord)
-        str_color = ''
-        if color == Stone.White:
-            str_color = 'White'
-        elif color == Stone.Black:
-            str_color = 'Black'
-        else:
-            self.make_cell_empty(coord)
-            return
-
-        self.__canvas.create_oval(
-            pos.x - self.__StoneRadius,
-            pos.y - self.__StoneRadius,
-            pos.x + self.__StoneRadius,
-            pos.y + self.__StoneRadius,
-            fill = str_color)
-
     def update_stones(self, coords, color):
         for coord in coords:
-            self.update_stone(coord, color)
+            self.__board.set_stone(coord, color)
+            pos = self.coord_to_canvas_coord(coord)
+            str_color = ''
+            if color == Stone.White:
+                str_color = 'White'
+            elif color == Stone.Black:
+                str_color = 'Black'
+            else:
+                self.__canvas.create_rectangle(
+                    pos.x - self.__CellSize / 2, pos.y - self.__CellSize / 2,
+                    pos.x + self.__CellSize / 2, pos.y + self.__CellSize / 2,
+                    fill='Green',
+                    outline='Black'
+                )
+                return
+
+            self.__canvas.create_oval(
+                pos.x - self.__StoneRadius,
+                pos.y - self.__StoneRadius,
+                pos.x + self.__StoneRadius,
+                pos.y + self.__StoneRadius,
+                fill = str_color)
 
     def set_board(self, board):
         '''
-        Update all the stones in the board.
+        Update all the stones on the board.
         '''
         for x in range(Board.Size):
             for y in range(Board.Size):
                 coord = Coord(x, y)
                 self.update_stone(coord, board.get_stone(coord))
 
-    def reverse_stone(self, coord):
-        color = Stone.get_rival_stone_color(self.__board.get_stone(coord))
-        # You may add some animation here.
-        self.update_stone(coord, color)
-
     def reverse_stones(self, coords):
         for coord in coords:
-            self.reverse_stone(coord)
+            color = Stone.get_rival_stone_color(self.__board.get_stone(coord))
+            # You may add some animation here.
+            self.update_stone(coord, color)
 
     def is_coord_on_board(self, canvas_coord):
+        board_size = self.__CellSize * Board.Size
         return (
             self.__BoardCoord.x <= canvas_coord.x 
-                <= self.__BoardCoord.x + self.__CellSize * 8
+                <= self.__BoardCoord.x + board_size
             and
             self.__BoardCoord.y <= canvas_coord.y
-                <= self.__BoardCoord.y + self.__CellSize * 8
+                <= self.__BoardCoord.y + board_size
         )
 
-    def on_board_clicked(self, canvas_coord):
-        coord = self.canvas_coord_to_coord(canvas_coord)
-        self.__controller.request_try_put_stone(coord)
-    
     def on_canvas_clicked(self, event):
         canvas_coord = CanvasCoord(event.x, event.y)
         if self.is_coord_on_board(canvas_coord):
-            self.on_board_clicked(canvas_coord)
+            coord = self.canvas_coord_to_coord(canvas_coord)
+            self.__controller.request_try_put_stone(coord)
             return
 
-    def set_stone_counts(self, stone_counts):
+    def set_stones_counts(self, stone_counts):
         '''
-        The argument 'stone_counts' is supposed to be a dictionary
-        with keys 'Stone.White' (= 0) and 'Stone.Black' (= 1).
+        The argument 'stone_counts' is supposed to be a list that stores
+        the number of white stones in the first element
+        and the number of black stones in the second element
         '''
         # White stone counts
         self.__white_stone_counts_text = tk.StringVar()
@@ -197,12 +178,12 @@ class View:
         self.__white_stone_counts_text.set(f'White: {stone_counts[Stone.White]}')
         self.__black_stone_counts_text.set(f'Black: {stone_counts[Stone.Black]}')
 
-    def update_highlight(self, highlight):
+    def update_highlight(self, cells_to_highlight):
         pass
 
-    def notify_need_pass(self, highlight):
+    def notify_need_pass(self, cells_to_highlight):
         messagebox.showinfo('Need pass', 'You need to pass')
-        self.update_highlight(highlight)
+        self.update_highlight(cells_to_highlight)
 
     def create_window(self, initial_board, initial_stone_counts, highlighted_cells):
         '''
@@ -259,7 +240,7 @@ class View:
         self.set_board(initial_board)
         
         # ----- Stone counts -----
-        self.set_stone_counts(initial_stone_counts)
+        self.set_stones_counts(initial_stone_counts)
         
         # ---- Highlight -----
         self.update_highlight(highlighted_cells)
