@@ -178,14 +178,14 @@ class View:
         self.__white_stone_counts_text.set(f'White: {stone_counts[Stone.White]}')
         self.__black_stone_counts_text.set(f'Black: {stone_counts[Stone.Black]}')
 
-    def update_highlight(self, cells_to_highlight):
-        pass
+    def update_highlight(self):
+        cells_to_highlight = self.__controller.request_cells_to_highlight()
 
-    def notify_need_pass(self, cells_to_highlight):
+    def notify_need_pass(self):
         messagebox.showinfo('Need pass', 'You need to pass')
-        self.update_highlight(cells_to_highlight)
+        self.update_highlight()
 
-    def create_window(self, initial_board, initial_stone_counts, highlighted_cells):
+    def create_window(self, board, stone_counts):
         '''
         This function is supposed to be called when launching a game.
         '''
@@ -237,12 +237,12 @@ class View:
                 fill = 'black')
         
         # ----- Stones -----
-        self.set_board(initial_board)
+        self.set_board(board)
         
         # ----- Stone counts -----
-        self.set_stones_counts(initial_stone_counts)
+        self.set_stones_counts(stone_counts)
         
         # ---- Highlight -----
-        self.update_highlight(highlighted_cells)
+        self.update_highlight()
 
         self.__window.mainloop()

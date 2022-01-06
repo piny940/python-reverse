@@ -17,6 +17,10 @@ class ControllerBase(metaclass=ABCMeta):
     def request_switch_turn(self):
         pass
     
+    @abstractmethod
+    def request_cells_to_highlight(self):
+        pass
+    
     # TODO: A function to switch "Player vs Player" and "Player vs CPU"
     
     # ----- Functions to be called in core.py -----
@@ -44,8 +48,7 @@ class Controller(ControllerBase):
     def main(self):
         board = self.__reversi.get_board()
         stone_counts = board.get_stones_counts()
-        cells_to_highlight = [] # TODO: Get the coords of the cells to highlight
-        self.__view.create_window(board, stone_counts, cells_to_highlight)
+        self.__view.create_window(board, stone_counts)
     
     def __init__(self):
         self.__reversi = Reversi(self)
@@ -66,6 +69,10 @@ class Controller(ControllerBase):
         # TODO: Switch to next turn
         pass
 
+    def request_cells_to_highlight(self):
+        # TODO: Return the coords of the cells that player can put stone.
+        pass
+
     # ----- Functions to be called in core.py -----
     def request_notify_put_fails(self, coord):
         # TODO: Notify that the player cannot put a stone at the given coord.
@@ -78,8 +85,7 @@ class Controller(ControllerBase):
         self.__view.reverse_stones(coords)
 
     def request_notify_need_pass(self):
-        cells_to_highlight = [] # TODO: Get the coords of the cells to highlight
-        self.__view.notify_need_pass(cells_to_highlight)
+        self.__view.notify_need_pass()
 
     def request_update_stones_counts(self, stone_counts):
         self.__view.update_stone_counts(stone_counts)
