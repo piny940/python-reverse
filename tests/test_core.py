@@ -1,7 +1,6 @@
 import unittest as t
 import textwrap
 import core
-import view
 
 
 def trim_for_board(s):
@@ -89,21 +88,6 @@ class TestCoord(t.TestCase):
         self.assertTrue(base != core.Coord(1, 1))
         self.assertFalse(base != core.Coord(0, 0))
 
-    def test_x(self):
-        c1 = view.CanvasCoord(1, 3)
-        c2 = view.CanvasCoord(0, 3)
-        self.assertEqual(c1.x, 1)
-
-        c2.x = 3
-        self.assertEqual(c2.x, 3)
-
-    def test_y(self):
-        c1 = view.CanvasCoord(1, 1)
-        c2 = view.CanvasCoord(0, 3)
-        self.assertEqual(c1.y, 1)
-
-        c2.y = 4
-        self.assertEqual(c2.y, 4)
 
 class TestStone(t.TestCase):
     def test_to_char(self):
