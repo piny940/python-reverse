@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 from core import Stone, Coord, Board
 
 
@@ -36,10 +37,16 @@ class View:
         self.__TitleCoord = CanvasCoord(20, 10)
         self.__TitleSize = 50
         self.__TitleFont = 'Times'
+        
+        # Stone Counts Label
+        self.__WhiteStoneCountsLabelCoord = CanvasCoord(600, 400)
+        self.__BlackStoneCountsLabelCoord = CanvasCoord(600, 450)
+        self.__StoneCountsLabelSize = 25
+        self.__StoneCountsLabelFont = 'Times'
+        self.__is_stones_counts_set = False
 
     def on_new_game_button_clicked(self):
-        # TODO: Initialize the board.
-        pass
+        self.__controller.request_initialize_board()
 
     def on_switch_button_clicked(self):
         # TODO:
@@ -70,37 +77,118 @@ class View:
         y = self.__BoardCoord.y + self.__CellSize * (coord_y + 0.5)
         return CanvasCoord(x, y)
 
-    def set_stone(self, coord, color):
-        self.__board.set_stone(coord, color)
-        pos = self.coord_to_canvas_coord(coord)
-        str_color = ''
-        if color == Stone.White:
-            str_color = 'White'
-        elif color == Stone.Black:
-            str_color = 'Black'
+    def canvas_coord_to_coord(self, canvas_coord):
+        if not self.is_coord_on_board(canvas_coord):
+            '''
+            Convert a coord on canvas to the corresponding coord on reversi board.
+            canvas_coord must point inside of the reversi board.
+            If not, this function raises an exception.
+            '''
+            raise BaseException()
+        
+        x = (canvas_coord.x - self.__BoardCoord.x) // self.__CellSize
+        y = (canvas_coord.y - self.__BoardCoord.y) // self.__CellSize
+        return Coord(x, y)
 
-        self.__canvas.create_oval(
-            pos.x - self.__StoneRadius,
-            pos.y - self.__StoneRadius,
-            pos.x + self.__StoneRadius,
-            pos.y + self.__StoneRadius,
-            fill = str_color)
+    def update_stones(self, coords, color):
+        for coord in coords:
+            self.__board.set_stone(coord, color)
+            pos = self.coord_to_canvas_coord(coord)
+            str_color = ''
+            if color == Stone.White:
+                str_color = 'White'
+            elif color == Stone.Black:
+                str_color = 'Black'
+            else:
+                self.__canvas.create_rectangle(
+                    pos.x - self.__CellSize / 2, pos.y - self.__CellSize / 2,
+                    pos.x + self.__CellSize / 2, pos.y + self.__CellSize / 2,
+                    fill='Green',
+                    outline='Black'
+                )
+                return
+
+            self.__canvas.create_oval(
+                pos.x - self.__StoneRadius,
+                pos.y - self.__StoneRadius,
+                pos.x + self.__StoneRadius,
+                pos.y + self.__StoneRadius,
+                fill = str_color)
+        stones_counts = self.__board.get_stones_counts()
+        self.update_stones_counts(stones_counts)
 
     def set_board(self, board):
         '''
-        Set all the stones in the board.
+        Update all the stones on the board.
         '''
         for x in range(Board.Size):
             for y in range(Board.Size):
                 coord = Coord(x, y)
-                self.set_stone(coord, board.get_stone(coord))
+                self.update_stones([coord], board.get_stone(coord))
 
-    def reverse_stone(self, coord):
-        color = Stone.get_rival_stone_color(self.__board.get_stone(coord))
-        # You may add some animation here.
-        self.set_stone(coord, color)
+    def reverse_stones(self, coords):
+        for coord in coords:
+            color = Stone.get_rival_stone_color(self.__board.get_stone(coord))
+            # You may add some animation here.
+            self.update_stones([coord], color)
 
-    def create_window(self):
+    def is_coord_on_board(self, canvas_coord):
+        board_size = self.__CellSize * Board.Size
+        return (
+            self.__BoardCoord.x <= canvas_coord.x 
+                <= self.__BoardCoord.x + board_size
+            and
+            self.__BoardCoord.y <= canvas_coord.y
+                <= self.__BoardCoord.y + board_size
+        )
+
+    def on_canvas_clicked(self, event):
+        canvas_coord = CanvasCoord(event.x, event.y)
+        if self.is_coord_on_board(canvas_coord):
+            coord = self.canvas_coord_to_coord(canvas_coord)
+            self.__controller.request_try_put_stone(coord)
+            return
+
+    def update_stones_counts(self, stone_counts):
+        '''
+        The argument 'stone_counts' is supposed to be a list that stores
+        the number of white stones in the first element
+        and the number of black stones in the second element
+        '''
+        if not self.__is_stones_counts_set:
+            self.__is_stones_counts_set = True
+            
+            # White stone counts
+            self.__white_stone_counts_text = tk.StringVar()
+            self.__white_stone_counts_label = tk.Label(
+                self.__window,
+                font = f'{self.__StoneCountsLabelFont} {self.__StoneCountsLabelSize}',
+                textvariable = self.__white_stone_counts_text)
+            self.__white_stone_counts_label.place(
+                x = self.__WhiteStoneCountsLabelCoord.x,
+                y = self.__WhiteStoneCountsLabelCoord.y)
+            
+            # Black stone counts
+            self.__black_stone_counts_text = tk.StringVar()
+            self.__black_stone_counts_label = tk.Label(
+                self.__window,
+                font = f'{self.__StoneCountsLabelFont} {self.__StoneCountsLabelSize}',
+                textvariable = self.__black_stone_counts_text)
+            self.__black_stone_counts_label.place(
+                x = self.__BlackStoneCountsLabelCoord.x,
+                y = self.__BlackStoneCountsLabelCoord.y)
+
+        self.__white_stone_counts_text.set(f'White: {stone_counts[Stone.White]}')
+        self.__black_stone_counts_text.set(f'Black: {stone_counts[Stone.Black]}')
+
+    def update_highlight(self):
+        cells_to_highlight = self.__controller.request_puttable_cells_for_current_player()
+
+    def notify_need_pass(self):
+        messagebox.showinfo('Need pass', 'You need to pass')
+        self.update_highlight()
+
+    def create_window(self, board):
         '''
         This function is supposed to be called when launching a game.
         '''
@@ -113,6 +201,7 @@ class View:
                             height=self.__WindowHeight)
 
         self.__canvas.grid(row = 0, column = 0)
+        self.__canvas.bind('<ButtonPress-1>', self.on_canvas_clicked)
 
         # ---- Title -----
         self.__canvas.create_text(
@@ -149,5 +238,11 @@ class View:
                 self.__BoardCoord.x + self.__CellSize * 8,
                 self.__BoardCoord.y + i * self.__CellSize,
                 fill = 'black')
+        
+        # ----- Stones -----
+        self.set_board(board)
+        
+        # ---- Highlight -----
+        self.update_highlight()
 
         self.__window.mainloop()
