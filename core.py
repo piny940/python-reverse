@@ -1,4 +1,5 @@
 import copy
+import random
 
 
 class UnreachableError(BaseException):
@@ -50,6 +51,7 @@ class Coord:
     @y.setter
     def y(self, value):
         self.__y = value
+
 
 class Stone:
     '''
@@ -189,6 +191,90 @@ class Board:
 
     def get_entire(self):
         return copy.deepcopy(self.__board)
+
+
+class CPU:
+    class Score:
+        Corner = 200
+        CornerSide = 100
+        AroundCorner = -100
+        Normal = 0
+        Default = -100
+
+    '''
+    get_put_coord(reversi, color)
+        Return a coord to put stone. This function assumes that `color` player
+        can put stone at least one place.
+    '''
+    @staticmethod
+    def get_put_coord(reversi, color):
+        maxScore = CPU.Score.Default
+        coords = []
+        for c in reversi.get_puttable_coords(color):
+            score = CPU.get_score_of_coord(reversi, c, color)
+            if score > maxScore:
+                maxScore = score
+                coords = [c]
+            elif score == maxScore:
+                coords.append(c)
+        return coords[random.randrange(len(coords))]    # Select one randomly
+
+    @staticmethod
+    def get_score_of_coord(reversi, coord, color):
+        # The score is {Base score} + {Additional score}.
+        # The base score is caliculated by the position on the boord.
+        # The additional score is the count of how many stones are reversed.
+        return CPU.get_base_score_of_coord(reversi, coord, color) + \
+            len(reversi.get_all_sandwiched_stones_coords(coord, color))
+
+    '''
+    get_base_score_of_coord(reversi, coord, color)
+        Calculate the base score of `coord` position by checking the position
+        on the board.
+    '''
+    @staticmethod
+    def get_base_score_of_coord(reversi, coord, color):
+        (x, y) = coord.get()
+        if CPU.is_corner(coord):
+            return CPU.Score.Corner
+
+        directions = []
+        if x == 0 or x == Board.Size - 1:
+            directions = [Coord(0, -1), Coord(0, 1)]
+        elif y == 0 or y == Board.Size - 1:
+            directions = [Coord(-1, 0), Coord(1, 0)]
+
+        if len(directions) != 0:
+            rival_color = Stone.get_rival_stone_color(color)
+            board = reversi.get_board()
+            for d in directions:
+                c = coord + d
+                while board.get_stone(c) == rival_color:
+                    c += d
+                while board.get_stone(c) == color:
+                    if CPU.is_corner(c):
+                        return CPU.Score.CornerSide
+                    c += d
+
+        # Check for * positions
+        #  +--- ... ---+
+        #  | *       * |
+        #  |**       **|
+        #  .           .
+        #  |**       **|
+        #  | *       * |
+        #  +--- ... ---+
+        if (x <= 1 or x >= Board.Size - 2) and (y <= 1 or y >= Board.Size - 2):
+            return CPU.Score.AroundCorner
+
+        return CPU.Score.Normal
+
+    @staticmethod
+    def is_corner(coord):
+        (x, y) = coord.get()
+        if (x == 0 or x == Board.Size - 1) and (y == 0 or y == Board.Size - 1):
+            return True
+        return False
 
 
 class Reversi:
@@ -354,17 +440,32 @@ class Reversi:
             Also, if the rival player is CPU, do the CPU's action, and return
             back to the current player's turn.
         '''
-        next_player = Stone.get_rival_stone_color(self.__player_color)
 
+        next_player = Stone.get_rival_stone_color(self.__player_color)
+        if self.need_pass(next_player):
+            # TODO: Notify
+            return
+
+        if self.get_play_mode() == Reversi.PlayMode.VsCPU:
+            while True:
+                self.put_stone_color(
+                        CPU.get_put_coord(self, next_player), next_player)
+                if self.need_pass(self.__player_color):
+                    # TODO: Notify
+                    pass
+                else:
+                    break
+
+        self.__player_color = next_player
+
+    def need_pass(self, color):
         for x in range(Board.Size):
             for y in range(Board.Size):
-                if self.can_put_here(Coord(x, y), next_player):
-                    self.__player_color = next_player
-                    return
-        # If the next player can put stone nowhere, reaches here.
-        # TODO: Notify
+                if self.can_put_here(Coord(x, y), color):
+                    return False
+        return True
 
-    def get_puttable_coords(self, color = None):
+    def get_puttable_coords(self, color=None):
         if color is None:
             color = self.get_player_color()
         puttable_coords = []
