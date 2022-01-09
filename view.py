@@ -43,6 +43,7 @@ class View:
         self.__BlackStoneCountsLabelCoord = CanvasCoord(600, 450)
         self.__StoneCountsLabelSize = 25
         self.__StoneCountsLabelFont = 'Times'
+        self.__is_stones_counts_set = False
 
     def on_new_game_button_clicked(self):
         self.__controller.request_initialize_board()
@@ -113,6 +114,8 @@ class View:
                 pos.x + self.__StoneRadius,
                 pos.y + self.__StoneRadius,
                 fill = str_color)
+        stones_counts = self.__board.get_stones_counts()
+        self.update_stones_counts(stones_counts)
 
     def set_board(self, board):
         '''
@@ -121,13 +124,13 @@ class View:
         for x in range(Board.Size):
             for y in range(Board.Size):
                 coord = Coord(x, y)
-                self.update_stone(coord, board.get_stone(coord))
+                self.update_stones([coord], board.get_stone(coord))
 
     def reverse_stones(self, coords):
         for coord in coords:
             color = Stone.get_rival_stone_color(self.__board.get_stone(coord))
             # You may add some animation here.
-            self.update_stone(coord, color)
+            self.update_stones([coord], color)
 
     def is_coord_on_board(self, canvas_coord):
         board_size = self.__CellSize * Board.Size
@@ -146,46 +149,46 @@ class View:
             self.__controller.request_try_put_stone(coord)
             return
 
-    def set_stones_counts(self, stone_counts):
+    def update_stones_counts(self, stone_counts):
         '''
         The argument 'stone_counts' is supposed to be a list that stores
         the number of white stones in the first element
         and the number of black stones in the second element
         '''
-        # White stone counts
-        self.__white_stone_counts_text = tk.StringVar()
-        self.__white_stone_counts_label = tk.Label(
-            self.__window,
-            font = f'{self.__StoneCountsLabelFont} {self.__StoneCountsLabelSize}',
-            textvariable = self.__white_stone_counts_text)
-        self.__white_stone_counts_label.place(
-            x = self.__WhiteStoneCountsLabelCoord.x,
-            y = self.__WhiteStoneCountsLabelCoord.y)
-        
-        # Black stone counts
-        self.__black_stone_counts_text = tk.StringVar()
-        self.__black_stone_counts_label = tk.Label(
-            self.__window,
-            font = f'{self.__StoneCountsLabelFont} {self.__StoneCountsLabelSize}',
-            textvariable = self.__black_stone_counts_text)
-        self.__black_stone_counts_label.place(
-            x = self.__BlackStoneCountsLabelCoord.x,
-            y = self.__BlackStoneCountsLabelCoord.y)
-        
-        self.update_stone_counts(stone_counts)
-        
-    def update_stone_counts(self, stone_counts):
+        if not self.__is_stones_counts_set:
+            self.__is_stones_counts_set = True
+            
+            # White stone counts
+            self.__white_stone_counts_text = tk.StringVar()
+            self.__white_stone_counts_label = tk.Label(
+                self.__window,
+                font = f'{self.__StoneCountsLabelFont} {self.__StoneCountsLabelSize}',
+                textvariable = self.__white_stone_counts_text)
+            self.__white_stone_counts_label.place(
+                x = self.__WhiteStoneCountsLabelCoord.x,
+                y = self.__WhiteStoneCountsLabelCoord.y)
+            
+            # Black stone counts
+            self.__black_stone_counts_text = tk.StringVar()
+            self.__black_stone_counts_label = tk.Label(
+                self.__window,
+                font = f'{self.__StoneCountsLabelFont} {self.__StoneCountsLabelSize}',
+                textvariable = self.__black_stone_counts_text)
+            self.__black_stone_counts_label.place(
+                x = self.__BlackStoneCountsLabelCoord.x,
+                y = self.__BlackStoneCountsLabelCoord.y)
+
         self.__white_stone_counts_text.set(f'White: {stone_counts[Stone.White]}')
         self.__black_stone_counts_text.set(f'Black: {stone_counts[Stone.Black]}')
 
     def update_highlight(self):
-        cells_to_highlight = self.__controller.request_cells_to_highlight()
+        cells_to_highlight = self.__controller.request_puttable_cells_for_current_player()
 
     def notify_need_pass(self):
         messagebox.showinfo('Need pass', 'You need to pass')
         self.update_highlight()
 
-    def create_window(self, board, stone_counts):
+    def create_window(self, board):
         '''
         This function is supposed to be called when launching a game.
         '''
@@ -238,9 +241,6 @@ class View:
         
         # ----- Stones -----
         self.set_board(board)
-        
-        # ----- Stone counts -----
-        self.set_stones_counts(stone_counts)
         
         # ---- Highlight -----
         self.update_highlight()

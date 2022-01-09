@@ -18,7 +18,7 @@ class ControllerBase(metaclass=ABCMeta):
         pass
     
     @abstractmethod
-    def request_cells_to_highlight(self):
+    def request_puttable_cells_for_current_player(self):
         pass
     
     # TODO: A function to switch "Player vs Player" and "Player vs CPU"
@@ -39,16 +39,11 @@ class ControllerBase(metaclass=ABCMeta):
     @abstractmethod
     def request_notify_need_pass(self):
         pass
-    
-    @abstractmethod
-    def request_update_stones_counts(self, stone_counts):
-        pass
 
 class Controller(ControllerBase):
     def main(self):
         board = self.__reversi.get_board()
-        stone_counts = board.get_stones_counts()
-        self.__view.create_window(board, stone_counts)
+        self.__view.create_window(board)
     
     def __init__(self):
         self.__reversi = Reversi(self)
@@ -60,7 +55,6 @@ class Controller(ControllerBase):
         board = self.__reversi.get_board()
         stone_counts = board.get_stones_counts()
         self.__view.set_board(board)
-        self.__view.set_stones_counts(stone_counts)
 
     def request_try_put_stone(self, coord):
         self.__reversi.put_stone(coord)
@@ -69,7 +63,7 @@ class Controller(ControllerBase):
         # TODO: Switch to next turn
         pass
 
-    def request_cells_to_highlight(self):
+    def request_puttable_cells_for_current_player(self):
         # TODO: Return the coords of the cells that player can put stone.
         pass
 
@@ -86,6 +80,3 @@ class Controller(ControllerBase):
 
     def request_notify_need_pass(self):
         self.__view.notify_need_pass()
-
-    def request_update_stones_counts(self, stone_counts):
-        self.__view.update_stone_counts(stone_counts)
