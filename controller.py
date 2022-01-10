@@ -57,7 +57,6 @@ class Controller(ControllerBase):
     def request_initialize_board(self):
         self.__reversi.init_state()
         board = self.__reversi.get_board()
-        stone_counts = board.get_stones_counts()
         self.__view.set_board(board)
 
     def request_try_put_stone(self, coord):

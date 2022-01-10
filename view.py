@@ -93,6 +93,8 @@ class View:
     def update_stones(self, coords, color):
         for coord in coords:
             self.__board.set_stone(coord, color)
+            stones_counts = self.__board.get_stones_counts()
+            self.update_stones_counts(stones_counts)
             pos = self.coord_to_canvas_coord(coord)
             str_color = ''
             if color == Stone.White:
@@ -114,8 +116,6 @@ class View:
                 pos.x + self.__StoneRadius,
                 pos.y + self.__StoneRadius,
                 fill = str_color)
-        stones_counts = self.__board.get_stones_counts()
-        self.update_stones_counts(stones_counts)
 
     def set_board(self, board):
         '''
