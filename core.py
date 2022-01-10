@@ -222,7 +222,7 @@ class CPU:
     @staticmethod
     def get_score_of_coord(reversi, coord, color):
         # The score is {Base score} + {Additional score}.
-        # The base score is caliculated by the position on the boord.
+        # The base score is calculated by the position on the boord.
         # The additional score is the count of how many stones are reversed.
         return CPU.get_base_score_of_coord(reversi, coord, color) + \
             len(reversi.get_all_sandwiched_stones_coords(coord, color))
