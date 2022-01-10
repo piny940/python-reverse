@@ -346,6 +346,9 @@ class Reversi:
             pass
         elif (w + b) >= Board.Size ** 2:
             pass
+        else:
+            # No one wins yet. Continue the game.
+            self.proceed_to_next()
 
     def put_stone(self, coord):
         self.put_stone_color(coord, self.__player_color)
