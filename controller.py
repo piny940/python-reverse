@@ -73,8 +73,7 @@ class Controller(ControllerBase):
 
     # ----- Functions to be called in core.py -----
     def request_notify_put_fails(self, coord):
-        # TODO: Notify that the player cannot put a stone at the given coord.
-        pass
+        self.__view.notify_put_fails(coord)
 
     def request_update_stones(self, coords, color):
         self.__view.update_stones(coords, color)

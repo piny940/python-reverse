@@ -207,6 +207,12 @@ class View:
             ''')
         self.__controller.request_initialize_board()
 
+    def notify_put_fails(self, coord):
+        messagebox.showerror('Put fails',
+            f'''
+            You cannot put stone at {coord}.
+            ''')
+
     def create_window(self, board):
         '''
         This function is supposed to be called when launching a game.
