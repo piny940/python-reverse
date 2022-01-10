@@ -40,6 +40,10 @@ class ControllerBase(metaclass=ABCMeta):
     def request_notify_need_pass(self):
         pass
 
+    @abstractmethod
+    def request_notify_player_wins(self, color):
+        pass
+
 class Controller(ControllerBase):
     def main(self):
         board = self.__reversi.get_board()
@@ -80,3 +84,6 @@ class Controller(ControllerBase):
 
     def request_notify_need_pass(self):
         self.__view.notify_need_pass()
+
+    def request_notify_player_wins(self, color):
+        self.__view.notify_player_wins(color)

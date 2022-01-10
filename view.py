@@ -188,6 +188,22 @@ class View:
         messagebox.showinfo('Need pass', 'You need to pass')
         self.update_highlight()
 
+    def notify_player_wins(self, color):
+        winner = ''
+        if color == Stone.White:
+            winner = 'white'
+        elif color == Stone.Black:
+            winner = 'black'
+        else:
+            raise BaseException()
+        
+        messagebox.showinfo('Player wins',
+            f'''
+            The {winner} one won.
+            Press the button to start a new game.
+            ''')
+        self.__controller.request_initialize_board()
+
     def create_window(self, board):
         '''
         This function is supposed to be called when launching a game.
