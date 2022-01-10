@@ -458,6 +458,7 @@ class Reversi:
             return
 
         if self.get_play_mode() == Reversi.PlayMode.VsCPU:
+            # TODO: Notify the player change
             while True:
                 self.put_stone_color(
                         CPU.get_put_coord(self, next_player), next_player)
@@ -468,6 +469,7 @@ class Reversi:
                     break
 
         self.__player_color = next_player
+        # TODO: Notify the player change
 
     def need_pass(self, color):
         for x in range(Board.Size):
