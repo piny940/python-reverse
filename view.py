@@ -185,8 +185,11 @@ class View:
         cells_to_highlight = self.__controller.request_puttable_cells_for_current_player()
 
     def notify_need_pass(self):
-        messagebox.showinfo('Need pass', 'You need to pass')
-        self.update_highlight()
+        messagebox.showinfo('Need pass',
+            f'''
+            You need to pass.
+            Press the button to proceed to next.
+            ''')
 
     def notify_player_wins(self, color):
         winner = ''
