@@ -201,13 +201,13 @@ class CPU:
         Normal = 0
         Default = -100
 
-    '''
-    get_put_coord(reversi, color)
-        Return a coord to put stone. This function assumes that `color` player
-        can put stone at least one place.
-    '''
     @staticmethod
     def get_put_coord(reversi, color):
+        '''
+        get_put_coord(reversi, color)
+            Return a coord to put stone. This function assumes that `color`
+            player can put stone at least one place.
+        '''
         maxScore = CPU.Score.Default
         coords = []
         for c in reversi.get_puttable_coords(color):
@@ -227,13 +227,13 @@ class CPU:
         return CPU.get_base_score_of_coord(reversi, coord, color) + \
             len(reversi.get_all_sandwiched_stones_coords(coord, color))
 
-    '''
-    get_base_score_of_coord(reversi, coord, color)
-        Calculate the base score of `coord` position by checking the position
-        on the board.
-    '''
     @staticmethod
     def get_base_score_of_coord(reversi, coord, color):
+        '''
+        get_base_score_of_coord(reversi, coord, color)
+            Calculate the base score of `coord` position by checking the
+            position on the board.
+        '''
         (x, y) = coord.get()
         if CPU.is_corner(coord):
             return CPU.Score.Corner
