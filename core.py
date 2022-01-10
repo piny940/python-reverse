@@ -238,6 +238,17 @@ class CPU:
         if CPU.is_corner(coord):
             return CPU.Score.Corner
 
+        # Check for * positions
+        #
+        #   +---
+        #   |o*
+        #
+        #   +-----
+        #   |ooo*
+        #
+        #   +-----
+        #   |oxx*
+        #
         directions = []
         if x == 0 or x == Board.Size - 1:
             directions = [Coord(0, -1), Coord(0, 1)]
