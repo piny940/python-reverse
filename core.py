@@ -460,7 +460,7 @@ class Reversi:
             return
 
         next_player = Stone.get_rival_stone_color(self.__player_color)
-        if self.need_pass(next_player):
+        if self.pass_if_necessary(next_player):
             return
 
         if self.get_play_mode() == Reversi.PlayMode.VsCPU:
@@ -476,32 +476,45 @@ class Reversi:
                 # Back to the player's turn
                 self.__controller.request_notify_player_change(
                         self.__player_color)
-                if not self.need_pass(self.__player_color):
+                if not self.pass_if_necessary(self.__player_color):
                     break
         else:
             self.__player_color = next_player
             self.__controller.request_notify_player_change(next_player)
 
-    def need_pass(self, color):
-        if not self.need_pass_one(color):
+    def pass_if_necessary(self, color):
+        '''
+        Check whether the player of `color` need pass.
+
+        Return False if the player need not pass.
+
+        If the player need pass, returns True, but do an additional check for
+        the rival player.  If the rival player also need pass, finish the game
+        because it means that the both players can put stones nowhere.
+
+        This function also notifies the information of
+        - the player need pass.
+        - the game was finished.
+        '''
+        if not self.check_need_pass(color):
             return False
 
-        if self.need_pass_one(Stone.get_rival_stone_color(color)):
-            # Both of black and white can put nowhere. Finish the game.
+        if self.check_need_pass(Stone.get_rival_stone_color(color)):
+            # Both players can put stones nowhere. Finish the game.
             w = self.__board.get_white_stones_count()
             b = self.__board.get_black_stones_count()
-            if w > b:
-                self.__controller.request_notify_player_wins(Stone.White)
-            elif b > w:
-                self.__controller.request_notify_player_wins(Stone.Black)
-            else:
+            (is_draw_game, winner) = \
+                    self.judge_which_player_wins(white=w, black=b)
+            if is_draw_game:
                 self.__controller.request_notify_draw_game()
+            else:
+                self.__controller.request_notify_player_wins(winner)
             return True
 
         self.__controller.request_notify_need_pass(color)
         return True
 
-    def need_pass_one(self, color):
+    def check_need_pass(self, color):
         for x in range(Board.Size):
             for y in range(Board.Size):
                 if self.can_put_here(Coord(x, y), color):
@@ -515,21 +528,36 @@ class Reversi:
         '''
         w = self.__board.get_white_stones_count()
         b = self.__board.get_black_stones_count()
-        if w == 0:
-            self.__controller.request_notify_player_wins(Stone.Black)
-            return True
-        elif b == 0:
-            self.__controller.request_notify_player_wins(Stone.White)
-            return True
-        elif (w + b) == Board.Size ** 2:
-            if w > b:
-                self.__controller.request_notify_player_wins(Stone.White)
-            elif b > w:
-                self.__controller.request_notify_player_wins(Stone.Black)
-            else:
+        if w == 0 or b == 0 or (w + b) == Board.Size ** 2:
+            (is_draw_game, winner) = \
+                    self.judge_which_player_wins(white=w, black=b)
+            if is_draw_game:
                 self.__controller.request_notify_draw_game()
+            else:
+                self.__controller.request_notify_player_wins(winner)
             return True
         return False
+
+    def judge_which_player_wins(self, white=None, black=None):
+        '''
+        judge_which_player_wins(white={count}, black={count})
+            Judge which player wins. The return value is a tuple consist of two
+            elements: the first one is the flag that if they draws or not, and
+            the second one is the information which player wins.
+            (In pseudo code, this function returns ({is_draw_game}, {winner}))
+
+            Note that the second element is valid only when the first argument
+            is False (= when it's not a draw game).
+        '''
+        if white is None or black is None:
+            raise BaseException("Stone count is not specified")
+
+        if white > black:
+            return (False, Stone.White)
+        elif black > white:
+            return (False, Stone.Black)
+        else:
+            return (True, Stone.Unset)
 
     def get_puttable_coords(self, color=None):
         if color is None:
