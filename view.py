@@ -55,6 +55,12 @@ class View:
         self.__PlayModeLabelSize = 25
         self.__PlayModeLabelFont = 'Times'
         self.__is_play_mode_set = False
+        
+        # Current Turn Text
+        self.__CurrentTurnLabelCoord = CanvasCoord(300, 150)
+        self.__CurrentTurnLabelSize = 25
+        self.__CurrentTurnLabelFont = 'Times'
+        self.__is_current_turn_label_set = False
 
     def on_new_game_button_clicked(self):
         self.__controller.request_initialize_board()
@@ -209,6 +215,22 @@ class View:
         str_play_mode = 'VS CPU  ' if play_mode == Reversi.PlayMode.VsCPU else 'VS Player'
         self.__play_mode_text.set(str_play_mode)
 
+    def update_current_turn_label(self):
+        current_turn_color = self.__controller.request_get_play_color()
+        if not self.__is_current_turn_label_set:
+            self.__is_current_turn_label_set = True
+            self.__current_turn_text = tk.StringVar()
+            self.__current_turn_label = tk.Label(
+                self.__window,
+                font = f'{self.__CurrentTurnLabelFont} {self.__CurrentTurnLabelSize}',
+                textvariable = self.__current_turn_text)
+            self.__current_turn_label.place(
+                x = self.__CurrentTurnLabelCoord.x,
+                y = self.__CurrentTurnLabelCoord.y)
+        
+        str_current_turn = 'White' if current_turn_color == Stone.White else 'Black'
+        self.__current_turn_text.set(f"{str_current_turn}'s turn")
+
     def update_highlight(self):
         cells_to_highlight = self.__controller.request_puttable_cells_for_current_player()
         for x in range(Board.Size):
@@ -270,13 +292,9 @@ class View:
             ''')
 
     def notify_player_change(self, next_player_color):
-        str_color = 'white' if next_player_color == Stone.White else 'black'
+        self.update_current_turn_label()
         self.__window.update()
-        messagebox.showinfo('Next turn',
-            f'''
-            Next is the {str_color} turn.
-            ''')
-        
+        # TODO Sleep
 
     def create_window(self, board, play_mode):
         '''
@@ -337,5 +355,8 @@ class View:
         
         # ---- Play Mode -----
         self.update_play_mode(play_mode)
+        
+        # ----- Current Turn Label -----
+        self.update_current_turn_label()
 
         self.__window.mainloop()

@@ -29,6 +29,10 @@ class ControllerBase(metaclass=ABCMeta):
     def request_switch_mode(self, play_mode):
         pass
 
+    @abstractmethod
+    def request_get_play_color(self):
+        pass
+
     # ----- Functions to be called in core.py -----
     @abstractmethod
     def request_notify_put_fails(self, coord):
@@ -74,6 +78,7 @@ class Controller(ControllerBase):
         self.__reversi.init_state()
         board = self.__reversi.get_board()
         self.__view.set_board(board)
+        self.__view.update_current_turn_label()
         self.__view.update_highlight()
 
     def request_try_put_stone(self, coord):
@@ -90,12 +95,16 @@ class Controller(ControllerBase):
             self.__reversi.set_play_mode(Reversi.PlayMode.VsPlayer)
         else:
             self.__reversi.set_play_mode(Reversi.PlayMode.VsCPU)
+            self.request_initialize_board()
 
     def request_get_play_mode(self):
         return self.__reversi.get_play_mode()
 
     def request_get_cpu_color(self):
         return self.__reversi.get_cpu_color()
+    
+    def request_get_play_color(self):
+        return self.__reversi.get_player_color()
 
     # ----- Functions to be called in core.py -----
     def request_notify_put_fails(self, coord):
