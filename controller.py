@@ -62,7 +62,8 @@ class ControllerBase(metaclass=ABCMeta):
 class Controller(ControllerBase):
     def main(self):
         board = self.__reversi.get_board()
-        self.__view.create_window(board)
+        play_mode = self.__reversi.get_play_mode()
+        self.__view.create_window(board, play_mode)
 
     def __init__(self):
         self.__reversi = Reversi(self)
@@ -115,7 +116,7 @@ class Controller(ControllerBase):
         self.__view.notify_player_wins(color)
 
     def request_notify_player_change(self, next_player_color):
-        pass
+        self.__view.notify_player_change(next_player_color)
 
     def request_notify_draw_game(self):
         pass
