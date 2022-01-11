@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from core import Stone, Coord, Board, Reversi
+import time
 
 
 class CanvasCoord(Coord):
@@ -22,8 +23,8 @@ class View:
         self.__controller = controller
         
         # Window
-        self.__WindowWidth = 1000
-        self.__WindowHeight = 800
+        self.__WindowWidth = 510
+        self.__WindowHeight = 700
 
         # Board
         self.__BoardCoord = CanvasCoord(50, 200)
@@ -39,28 +40,31 @@ class View:
         self.__WhiteStoneColor = 'White'
 
         # Title
-        self.__TitleCoord = CanvasCoord(20, 10)
+        self.__TitleCoord = CanvasCoord(170, 50)
         self.__TitleSize = 50
         self.__TitleFont = 'Times'
         
         # Stone Counts Label
-        self.__WhiteStoneCountsLabelCoord = CanvasCoord(600, 400)
-        self.__BlackStoneCountsLabelCoord = CanvasCoord(600, 450)
-        self.__StoneCountsLabelSize = 25
+        self.__WhiteStoneCountsLabelCoord = CanvasCoord(90, 620)
+        self.__BlackStoneCountsLabelCoord = CanvasCoord(300, 620)
+        self.__StoneCountsLabelSize = 30
         self.__StoneCountsLabelFont = 'Times'
         self.__is_stones_counts_set = False
         
         # Play Mode
-        self.__PlayModeLabelCoord = CanvasCoord(600, 200)
-        self.__PlayModeLabelSize = 25
+        self.__PlayModeLabelCoord = CanvasCoord(270, 140)
+        self.__PlayModeLabelSize = 30
         self.__PlayModeLabelFont = 'Times'
         self.__is_play_mode_set = False
         
         # Current Turn Text
-        self.__CurrentTurnLabelCoord = CanvasCoord(300, 150)
-        self.__CurrentTurnLabelSize = 25
+        self.__CurrentTurnLabelCoord = CanvasCoord(90, 140)
+        self.__CurrentTurnLabelSize = 30
         self.__CurrentTurnLabelFont = 'Times'
         self.__is_current_turn_label_set = False
+        
+        # CPU Sleep Time
+        self.__CPUSleepTime = 0.3
 
     def on_new_game_button_clicked(self):
         self.__controller.request_initialize_board()
@@ -215,8 +219,9 @@ class View:
         str_play_mode = 'VS CPU  ' if play_mode == Reversi.PlayMode.VsCPU else 'VS Player'
         self.__play_mode_text.set(str_play_mode)
 
-    def update_current_turn_label(self):
-        current_turn_color = self.__controller.request_get_play_color()
+    def update_current_turn_label(self, current_turn_color = None):
+        if current_turn_color is None:
+            current_turn_color = self.__controller.request_get_play_color()
         if not self.__is_current_turn_label_set:
             self.__is_current_turn_label_set = True
             self.__current_turn_text = tk.StringVar()
@@ -288,7 +293,7 @@ class View:
         self.__window.update()
         messagebox.showerror('Put fails',
             f'''
-            You cannot put stone at {coord}.
+            You cannot put stone here.
             ''')
 
     def notify_draw_game(self):
@@ -300,9 +305,11 @@ class View:
         self.__controller.request_initialize_board()
 
     def notify_player_change(self, next_player_color):
-        self.update_current_turn_label()
+        self.update_current_turn_label(next_player_color)
         self.__window.update()
-        # TODO Sleep
+        if self.__controller.request_get_play_mode() == Reversi.PlayMode.VsCPU \
+            and self.__controller.request_get_cpu_color() == next_player_color:
+            time.sleep(self.__CPUSleepTime)
 
     def create_window(self, board, play_mode):
         '''
