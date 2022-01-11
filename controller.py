@@ -22,6 +22,10 @@ class ControllerBase(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def request_get_play_mode(self):
+        pass
+
+    @abstractmethod
     def request_get_cpu_color(self):
         pass
     
@@ -93,6 +97,9 @@ class Controller(ControllerBase):
             self.__reversi.set_play_mode(Reversi.PlayMode.VsPlayer)
         else:
             self.__reversi.set_play_mode(Reversi.PlayMode.VsCPU)
+
+    def request_get_play_mode(self):
+        return self.__reversi.get_play_mode()
 
     def request_get_cpu_color(self):
         return self.__reversi.get_cpu_color()
