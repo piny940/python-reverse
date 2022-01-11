@@ -39,6 +39,10 @@ class ControllerBase(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def request_notify_put_success(self, coord):
+        pass
+
+    @abstractmethod
     def request_update_stones(self, coords, color):
         pass
 
@@ -47,7 +51,7 @@ class ControllerBase(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def request_notify_need_pass(self):
+    def request_notify_need_pass(self, color):
         pass
 
     @abstractmethod
@@ -82,7 +86,10 @@ class Controller(ControllerBase):
         self.__view.update_highlight()
 
     def request_try_put_stone(self, coord):
-        self.__reversi.put_stone(coord)
+        if self.__reversi.put_stone(coord):
+            self.__reversi.proceed_to_next()
+        else:
+            self.__view.notify_put_fails(coord)
         self.__view.update_highlight()
 
     def request_puttable_cells_for_current_player(self):
@@ -102,7 +109,7 @@ class Controller(ControllerBase):
 
     def request_get_cpu_color(self):
         return self.__reversi.get_cpu_color()
-    
+
     def request_get_play_color(self):
         return self.__reversi.get_player_color()
 
@@ -110,15 +117,16 @@ class Controller(ControllerBase):
     def request_notify_put_fails(self, coord):
         self.__view.notify_put_fails(coord)
 
+    def request_notify_put_success(self, coord):
+        self.__reversi.proceed_to_next()
+
     def request_update_stones(self, coords, color):
         self.__view.update_stones(coords, color)
 
     def request_reverse_stones(self, coords):
         self.__view.reverse_stones(coords)
 
-    def request_notify_need_pass(self):
-        color = self.__reversi.get_player_color()
-        color = Stone.get_rival_stone_color(color)
+    def request_notify_need_pass(self, color):
         self.__view.notify_need_pass(color)
 
     def request_notify_player_wins(self, color):
