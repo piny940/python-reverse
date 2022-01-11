@@ -23,8 +23,8 @@ class View:
         self.__controller = controller
         
         # Window
-        self.__WindowWidth = 1000
-        self.__WindowHeight = 800
+        self.__WindowWidth = 510
+        self.__WindowHeight = 700
 
         # Board
         self.__BoardCoord = CanvasCoord(50, 200)
@@ -40,26 +40,26 @@ class View:
         self.__WhiteStoneColor = 'White'
 
         # Title
-        self.__TitleCoord = CanvasCoord(20, 10)
+        self.__TitleCoord = CanvasCoord(170, 50)
         self.__TitleSize = 50
         self.__TitleFont = 'Times'
         
         # Stone Counts Label
-        self.__WhiteStoneCountsLabelCoord = CanvasCoord(600, 400)
-        self.__BlackStoneCountsLabelCoord = CanvasCoord(600, 450)
-        self.__StoneCountsLabelSize = 25
+        self.__WhiteStoneCountsLabelCoord = CanvasCoord(90, 620)
+        self.__BlackStoneCountsLabelCoord = CanvasCoord(300, 620)
+        self.__StoneCountsLabelSize = 30
         self.__StoneCountsLabelFont = 'Times'
         self.__is_stones_counts_set = False
         
         # Play Mode
-        self.__PlayModeLabelCoord = CanvasCoord(600, 200)
-        self.__PlayModeLabelSize = 25
+        self.__PlayModeLabelCoord = CanvasCoord(270, 140)
+        self.__PlayModeLabelSize = 30
         self.__PlayModeLabelFont = 'Times'
         self.__is_play_mode_set = False
         
         # Current Turn Text
-        self.__CurrentTurnLabelCoord = CanvasCoord(300, 150)
-        self.__CurrentTurnLabelSize = 25
+        self.__CurrentTurnLabelCoord = CanvasCoord(90, 140)
+        self.__CurrentTurnLabelSize = 30
         self.__CurrentTurnLabelFont = 'Times'
         self.__is_current_turn_label_set = False
         
