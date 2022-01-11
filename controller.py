@@ -14,10 +14,6 @@ class ControllerBase(metaclass=ABCMeta):
         pass
     
     @abstractmethod
-    def request_switch_turn(self):
-        pass
-    
-    @abstractmethod
     def request_puttable_cells_for_current_player(self):
         pass
 
@@ -82,10 +78,6 @@ class Controller(ControllerBase):
     def request_try_put_stone(self, coord):
         self.__reversi.put_stone(coord)
         self.__view.update_highlight()
-
-    def request_switch_turn(self):
-        # TODO: Switch to next turn
-        pass
 
     def request_puttable_cells_for_current_player(self):
         color = self.__reversi.get_player_color()
