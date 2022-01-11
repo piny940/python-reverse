@@ -128,4 +128,4 @@ class Controller(ControllerBase):
         self.__view.notify_player_change(next_player_color)
 
     def request_notify_draw_game(self):
-        pass
+        self.__view.notify_draw_game()

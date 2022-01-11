@@ -291,6 +291,14 @@ class View:
             You cannot put stone at {coord}.
             ''')
 
+    def notify_draw_game(self):
+        messagebox.showinfo('Draw', 
+            f'''
+            Draw Game!
+            Press the button to start a new game.
+            ''')
+        self.__controller.request_initialize_board()
+
     def notify_player_change(self, next_player_color):
         self.update_current_turn_label()
         self.__window.update()
