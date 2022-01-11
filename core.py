@@ -433,15 +433,19 @@ class Reversi:
         self.__controller.request_reverse_stones(sandwiched_stones)
 
         # Check if either player wins
-        # TODO: Notify
         w = self.__board.get_white_stones_count()
         b = self.__board.get_black_stones_count()
         if w <= 0:
-            pass
+            self.__controller.request_notify_player_wins(Stone.Black)
         elif b <= 0:
-            pass
+            self.__controller.request_notify_player_wins(Stone.White)
         elif (w + b) >= Board.Size ** 2:
-            pass
+            if w > b:
+                self.__controller.request_notify_player_wins(Stone.White)
+            elif b > w:
+                self.__controller.request_notify_player_wins(Stone.Black)
+            else:
+                self.__controller.request_notify_draw_game()
         else:
             # No one wins yet. Continue the game.
             self.proceed_to_next()
@@ -467,7 +471,7 @@ class Reversi:
             return
 
         if self.get_play_mode() == Reversi.PlayMode.VsCPU:
-            # TODO: Notify the player change
+            self.__controller.request_notify_player_change(next_player)
             while True:
                 self.put_stone_color(
                         CPU.get_put_coord(self, next_player), next_player)
@@ -475,9 +479,10 @@ class Reversi:
                     self.__controller.request_notify_need_pass()
                 else:
                     break
-
-        self.__player_color = next_player
-        # TODO: Notify the player change
+            self.__controller.request_notify_player_change(self.__player_color)
+        else:
+            self.__player_color = next_player
+            self.__controller.request_notify_player_change(next_player)
 
     def need_pass(self, color):
         for x in range(Board.Size):

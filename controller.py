@@ -22,7 +22,7 @@ class ControllerBase(metaclass=ABCMeta):
         pass
     
     @abstractmethod
-    def request_player_change(self, next_player_color):
+    def request_notify_player_change(self, next_player_color):
         pass
     
     # TODO: A function to switch "Player vs Player" and "Player vs CPU"
@@ -47,6 +47,11 @@ class ControllerBase(metaclass=ABCMeta):
     @abstractmethod
     def request_notify_player_wins(self, color):
         pass
+
+    @abstractmethod
+    def request_notify_draw_game(self):
+        pass
+
 
 class Controller(ControllerBase):
     def main(self):
@@ -94,5 +99,8 @@ class Controller(ControllerBase):
     def request_notify_player_wins(self, color):
         self.__view.notify_player_wins(color)
     
-    def request_player_change(self, next_player_color):
+    def request_notify_player_change(self, next_player_color):
+        pass
+
+    def request_notify_draw_game(self):
         pass
