@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from core import Stone, Coord, Board, Reversi
+import time
 
 
 class CanvasCoord(Coord):
@@ -215,8 +216,9 @@ class View:
         str_play_mode = 'VS CPU  ' if play_mode == Reversi.PlayMode.VsCPU else 'VS Player'
         self.__play_mode_text.set(str_play_mode)
 
-    def update_current_turn_label(self):
-        current_turn_color = self.__controller.request_get_play_color()
+    def update_current_turn_label(self, current_turn_color = None):
+        if current_turn_color is None:
+            current_turn_color = self.__controller.request_get_play_color()
         if not self.__is_current_turn_label_set:
             self.__is_current_turn_label_set = True
             self.__current_turn_text = tk.StringVar()
@@ -300,9 +302,11 @@ class View:
         self.__controller.request_initialize_board()
 
     def notify_player_change(self, next_player_color):
-        self.update_current_turn_label()
+        self.update_current_turn_label(next_player_color)
         self.__window.update()
-        # TODO Sleep
+        if self.__controller.request_get_play_mode() == Reversi.PlayMode.VsCPU \
+            and self.__controller.request_get_cpu_color() == next_player_color:
+            time.sleep(0.3)
 
     def create_window(self, board, play_mode):
         '''
