@@ -54,12 +54,7 @@ class View:
         self.__controller.request_initialize_board()
 
     def on_switch_button_clicked(self):
-        # TODO:
-        # if current_mode is 'CPU Mode':
-        #   Switch to Player Mode
-        # elif current_mode is 'Player Mode:
-        #   Switch to CPU Mode
-        pass
+        self.__controller.request_switch_mode()
 
     def set_menu_bar(self):
         main_menu = tk.Menu(self.__window)
