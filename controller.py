@@ -20,9 +20,13 @@ class ControllerBase(metaclass=ABCMeta):
     @abstractmethod
     def request_puttable_cells_for_current_player(self):
         pass
-    
+
     @abstractmethod
-    def request_player_change(self, next_player_color):
+    def request_get_play_mode(self):
+        pass
+
+    @abstractmethod
+    def request_get_cpu_color(self):
         pass
     
     @abstractmethod
@@ -49,6 +53,15 @@ class ControllerBase(metaclass=ABCMeta):
     @abstractmethod
     def request_notify_player_wins(self, color):
         pass
+    
+    @abstractmethod
+    def request_notify_player_change(self, next_player_color):
+        pass
+
+    @abstractmethod
+    def request_notify_draw_game(self):
+        pass
+
 
 class Controller(ControllerBase):
     def main(self):
@@ -85,6 +98,12 @@ class Controller(ControllerBase):
         else:
             self.__reversi.set_play_mode(Reversi.PlayMode.VsCPU)
 
+    def request_get_play_mode(self):
+        return self.__reversi.get_play_mode()
+
+    def request_get_cpu_color(self):
+        return self.__reversi.get_cpu_color()
+
     # ----- Functions to be called in core.py -----
     def request_notify_put_fails(self, coord):
         self.__view.notify_put_fails(coord)
@@ -103,5 +122,8 @@ class Controller(ControllerBase):
     def request_notify_player_wins(self, color):
         self.__view.notify_player_wins(color)
     
-    def request_player_change(self, next_player_color):
+    def request_notify_player_change(self, next_player_color):
+        pass
+
+    def request_notify_draw_game(self):
         pass

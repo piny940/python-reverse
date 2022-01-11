@@ -314,7 +314,8 @@ class Reversi:
         self.init_state()
 
     def init_state(self):
-        self.__player_color = Stone.White
+        self.__player_color = Stone.Black
+        self.__cpu_color = Stone.get_rival_stone_color(self.__player_color)
         self.__board.init_state()
 
         # Initialize board like this:
@@ -408,15 +409,7 @@ class Reversi:
             Put stone of 'color' to the position 'coord', and reverse the
             stones sandwiched by the new stone and some existing stone whose
             color is 'color' too.
-
-            Also checks how many white/black stones on the board, and checks if
-            either player wins.
         '''
-        if not self.can_put_here(coord, color):
-            # Cannot put here
-            self.__controller.request_notify_put_fails(coord)
-            return
-
         # Put new stone
         self.__board.set_stone(coord, color)
         for d in Reversi.EightDirections:
@@ -432,22 +425,39 @@ class Reversi:
         self.__controller.request_update_stones([coord], color)
         self.__controller.request_reverse_stones(sandwiched_stones)
 
+    def put_stone(self, coord):
+        '''
+        put_stone(coord):
+            Check if the current player can put a stone at `coord`, and if can,
+            put one.
+
+            Also checks the number of white/black stones on the board, and
+            checks if either player wins.
+        '''
+        if not self.can_put_here(coord, self.__player_color):
+            # Cannot put here
+            self.__controller.request_notify_put_fails(coord)
+            return
+
+        self.put_stone_color(coord, self.__player_color)
+
         # Check if either player wins
-        # TODO: Notify
         w = self.__board.get_white_stones_count()
         b = self.__board.get_black_stones_count()
         if w <= 0:
-            pass
+            self.__controller.request_notify_player_wins(Stone.Black)
         elif b <= 0:
-            pass
+            self.__controller.request_notify_player_wins(Stone.White)
         elif (w + b) >= Board.Size ** 2:
-            pass
+            if w > b:
+                self.__controller.request_notify_player_wins(Stone.White)
+            elif b > w:
+                self.__controller.request_notify_player_wins(Stone.Black)
+            else:
+                self.__controller.request_notify_draw_game()
         else:
             # No one wins yet. Continue the game.
             self.proceed_to_next()
-
-    def put_stone(self, coord):
-        self.put_stone_color(coord, self.__player_color)
 
     def proceed_to_next(self):
         '''
@@ -467,7 +477,7 @@ class Reversi:
             return
 
         if self.get_play_mode() == Reversi.PlayMode.VsCPU:
-            # TODO: Notify the player change
+            self.__controller.request_notify_player_change(next_player)
             while True:
                 self.put_stone_color(
                         CPU.get_put_coord(self, next_player), next_player)
@@ -475,9 +485,10 @@ class Reversi:
                     self.__controller.request_notify_need_pass()
                 else:
                     break
-
-        self.__player_color = next_player
-        # TODO: Notify the player change
+            self.__controller.request_notify_player_change(self.__player_color)
+        else:
+            self.__player_color = next_player
+            self.__controller.request_notify_player_change(next_player)
 
     def need_pass(self, color):
         for x in range(Board.Size):
@@ -508,3 +519,6 @@ class Reversi:
 
     def get_board(self):
         return self.__board
+
+    def get_cpu_color(self):
+        return self.__cpu_color
