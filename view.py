@@ -62,6 +62,9 @@ class View:
         self.__CurrentTurnLabelSize = 25
         self.__CurrentTurnLabelFont = 'Times'
         self.__is_current_turn_label_set = False
+        
+        # CPU Sleep Time
+        self.__CPUSleepTime = 0.3
 
     def on_new_game_button_clicked(self):
         self.__controller.request_initialize_board()
@@ -306,7 +309,7 @@ class View:
         self.__window.update()
         if self.__controller.request_get_play_mode() == Reversi.PlayMode.VsCPU \
             and self.__controller.request_get_cpu_color() == next_player_color:
-            time.sleep(0.3)
+            time.sleep(self.__CPUSleepTime)
 
     def create_window(self, board, play_mode):
         '''
