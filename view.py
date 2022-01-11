@@ -293,7 +293,7 @@ class View:
         self.__window.update()
         messagebox.showerror('Put fails',
             f'''
-            You cannot put stone at {coord}.
+            You cannot put stone here.
             ''')
 
     def notify_draw_game(self):
