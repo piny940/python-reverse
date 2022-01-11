@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from core import Stone, Coord, Board
+from core import Stone, Coord, Board, Reversi
 
 
 class CanvasCoord(Coord):
@@ -49,12 +49,26 @@ class View:
         self.__StoneCountsLabelSize = 25
         self.__StoneCountsLabelFont = 'Times'
         self.__is_stones_counts_set = False
+        
+        # Play Mode
+        self.__PlayModeLabelCoord = CanvasCoord(600, 200)
+        self.__PlayModeLabelSize = 25
+        self.__PlayModeLabelFont = 'Times'
+        self.__is_play_mode_set = False
+        
+        # Current Turn Text
+        self.__CurrentTurnLabelCoord = CanvasCoord(300, 150)
+        self.__CurrentTurnLabelSize = 25
+        self.__CurrentTurnLabelFont = 'Times'
+        self.__is_current_turn_label_set = False
 
     def on_new_game_button_clicked(self):
         self.__controller.request_initialize_board()
 
     def on_switch_button_clicked(self):
         self.__controller.request_switch_mode()
+        play_mode = self.__controller.request_get_play_mode()
+        self.update_play_mode(play_mode)
 
     def set_menu_bar(self):
         main_menu = tk.Menu(self.__window)
@@ -186,6 +200,37 @@ class View:
         self.__white_stone_counts_text.set(f'White: {stone_counts[Stone.White]}')
         self.__black_stone_counts_text.set(f'Black: {stone_counts[Stone.Black]}')
 
+    def update_play_mode(self, play_mode):
+        if not self.__is_play_mode_set:
+            self.__is_play_mode_set = True
+            self.__play_mode_text = tk.StringVar()
+            self.__play_mode_label = tk.Label(
+                self.__window,
+                font = f'{self.__PlayModeLabelFont} {self.__PlayModeLabelSize}',
+                textvariable = self.__play_mode_text)
+            self.__play_mode_label.place(
+                x = self.__PlayModeLabelCoord.x,
+                y = self.__PlayModeLabelCoord.y)
+        
+        str_play_mode = 'VS CPU  ' if play_mode == Reversi.PlayMode.VsCPU else 'VS Player'
+        self.__play_mode_text.set(str_play_mode)
+
+    def update_current_turn_label(self):
+        current_turn_color = self.__controller.request_get_play_color()
+        if not self.__is_current_turn_label_set:
+            self.__is_current_turn_label_set = True
+            self.__current_turn_text = tk.StringVar()
+            self.__current_turn_label = tk.Label(
+                self.__window,
+                font = f'{self.__CurrentTurnLabelFont} {self.__CurrentTurnLabelSize}',
+                textvariable = self.__current_turn_text)
+            self.__current_turn_label.place(
+                x = self.__CurrentTurnLabelCoord.x,
+                y = self.__CurrentTurnLabelCoord.y)
+        
+        str_current_turn = 'White' if current_turn_color == Stone.White else 'Black'
+        self.__current_turn_text.set(f"{str_current_turn}'s turn")
+
     def update_highlight(self):
         cells_to_highlight = self.__controller.request_puttable_cells_for_current_player()
         for x in range(Board.Size):
@@ -215,6 +260,7 @@ class View:
             str_color = 'white'
         else:
             str_color = 'black'
+        self.__window.update()
         messagebox.showinfo('Need pass',
             f'''
             The {str_color} one need to pass.
@@ -230,6 +276,7 @@ class View:
         else:
             raise BaseException()
         
+        self.__window.update()
         messagebox.showinfo('Player wins',
             f'''
             The {winner} one won.
@@ -238,12 +285,18 @@ class View:
         self.__controller.request_initialize_board()
 
     def notify_put_fails(self, coord):
+        self.__window.update()
         messagebox.showerror('Put fails',
             f'''
             You cannot put stone at {coord}.
             ''')
 
-    def create_window(self, board):
+    def notify_player_change(self, next_player_color):
+        self.update_current_turn_label()
+        self.__window.update()
+        # TODO Sleep
+
+    def create_window(self, board, play_mode):
         '''
         This function is supposed to be called when launching a game.
         '''
@@ -299,5 +352,11 @@ class View:
         
         # ---- Highlight -----
         self.update_highlight()
+        
+        # ---- Play Mode -----
+        self.update_play_mode(play_mode)
+        
+        # ----- Current Turn Label -----
+        self.update_current_turn_label()
 
         self.__window.mainloop()
