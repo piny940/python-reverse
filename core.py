@@ -307,9 +307,10 @@ class Reversi:
         VsPlayer = 0
         VsCPU = 1
 
-    def __init__(self):
+    def __init__(self, controller):
         self.__board = Board()
         self.__play_mode = Reversi.PlayMode.VsPlayer
+        self.__controller = controller
         self.init_state()
 
     def init_state(self):
@@ -413,7 +414,7 @@ class Reversi:
         '''
         if not self.can_put_here(coord, color):
             # Cannot put here
-            # TODO: Notify
+            self.__controller.request_notify_put_fails(coord)
             return
 
         # Put new stone
@@ -423,8 +424,13 @@ class Reversi:
                 self.__board.set_stone(coord + d, Stone.Surrounding)
 
         # Reverse sandwiched stones
-        for p in self.get_all_sandwiched_stones_coords(coord, color):
+        sandwiched_stones = self.get_all_sandwiched_stones_coords(coord, color)
+        for p in sandwiched_stones:
             self.__board.set_stone(p, color)
+
+        # Tell View about changes on board
+        self.__controller.request_update_stones([coord], color)
+        self.__controller.request_reverse_stones(sandwiched_stones)
 
         # Check if either player wins
         # TODO: Notify
@@ -436,6 +442,9 @@ class Reversi:
             pass
         elif (w + b) >= Board.Size ** 2:
             pass
+        else:
+            # No one wins yet. Continue the game.
+            self.proceed_to_next()
 
     def put_stone(self, coord):
         self.put_stone_color(coord, self.__player_color)
@@ -454,7 +463,7 @@ class Reversi:
 
         next_player = Stone.get_rival_stone_color(self.__player_color)
         if self.need_pass(next_player):
-            # TODO: Notify
+            self.__controller.request_notify_need_pass()
             return
 
         if self.get_play_mode() == Reversi.PlayMode.VsCPU:
@@ -463,8 +472,7 @@ class Reversi:
                 self.put_stone_color(
                         CPU.get_put_coord(self, next_player), next_player)
                 if self.need_pass(self.__player_color):
-                    # TODO: Notify
-                    pass
+                    self.__controller.request_notify_need_pass()
                 else:
                     break
 
