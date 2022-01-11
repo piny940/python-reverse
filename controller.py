@@ -21,6 +21,10 @@ class ControllerBase(metaclass=ABCMeta):
     def request_puttable_cells_for_current_player(self):
         pass
     
+    @abstractmethod
+    def request_player_change(self, next_player_color):
+        pass
+    
     # TODO: A function to switch "Player vs Player" and "Player vs CPU"
     
     # ----- Functions to be called in core.py -----
@@ -40,6 +44,10 @@ class ControllerBase(metaclass=ABCMeta):
     def request_notify_need_pass(self):
         pass
 
+    @abstractmethod
+    def request_notify_player_wins(self, color):
+        pass
+
 class Controller(ControllerBase):
     def main(self):
         board = self.__reversi.get_board()
@@ -53,24 +61,24 @@ class Controller(ControllerBase):
     def request_initialize_board(self):
         self.__reversi.init_state()
         board = self.__reversi.get_board()
-        stone_counts = board.get_stones_counts()
         self.__view.set_board(board)
+        self.__view.update_highlight()
 
     def request_try_put_stone(self, coord):
         self.__reversi.put_stone(coord)
+        self.__view.update_highlight()
 
     def request_switch_turn(self):
         # TODO: Switch to next turn
         pass
 
     def request_puttable_cells_for_current_player(self):
-        # TODO: Return the coords of the cells that player can put stone.
-        pass
+        color = self.__reversi.get_player_color()
+        return self.__reversi.get_puttable_coords(color)
 
     # ----- Functions to be called in core.py -----
     def request_notify_put_fails(self, coord):
-        # TODO: Notify that the player cannot put a stone at the given coord.
-        pass
+        self.__view.notify_put_fails(coord)
 
     def request_update_stones(self, coords, color):
         self.__view.update_stones(coords, color)
@@ -79,4 +87,12 @@ class Controller(ControllerBase):
         self.__view.reverse_stones(coords)
 
     def request_notify_need_pass(self):
-        self.__view.notify_need_pass()
+        color = self.__reversi.get_player_color()
+        color = Stone.get_rival_stone_color(color)
+        self.__view.notify_need_pass(color)
+
+    def request_notify_player_wins(self, color):
+        self.__view.notify_player_wins(color)
+    
+    def request_player_change(self, next_player_color):
+        pass

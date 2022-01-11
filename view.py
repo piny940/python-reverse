@@ -27,11 +27,16 @@ class View:
 
         # Board
         self.__BoardCoord = CanvasCoord(50, 200)
+        self.__BoardColor = '#007300' # Green
+        self.__HighlightedCellColor = '#00b000' # Light Green
+        self.__CellOutlineColor = 'Black'
         self.__CellSize = 50
         self.__board = Board()
 
         # Stone
         self.__StoneRadius = 20
+        self.__BlackStoneColor = 'Black'
+        self.__WhiteStoneColor = 'White'
 
         # Title
         self.__TitleCoord = CanvasCoord(20, 10)
@@ -90,30 +95,35 @@ class View:
         y = (canvas_coord.y - self.__BoardCoord.y) // self.__CellSize
         return Coord(x, y)
 
-    def update_stones(self, coords, color):
-        for coord in coords:
-            self.__board.set_stone(coord, color)
-            pos = self.coord_to_canvas_coord(coord)
-            str_color = ''
-            if color == Stone.White:
-                str_color = 'White'
-            elif color == Stone.Black:
-                str_color = 'Black'
-            else:
-                self.__canvas.create_rectangle(
-                    pos.x - self.__CellSize / 2, pos.y - self.__CellSize / 2,
-                    pos.x + self.__CellSize / 2, pos.y + self.__CellSize / 2,
-                    fill='Green',
-                    outline='Black'
-                )
-                return
-
-            self.__canvas.create_oval(
+    def show_stone(self, pos, color):
+        str_color = ''
+        if color == Stone.White:
+            str_color = self.__WhiteStoneColor
+        elif color == Stone.Black:
+            str_color = self.__BlackStoneColor
+        else:
+            return
+        
+        self.__canvas.create_oval(
                 pos.x - self.__StoneRadius,
                 pos.y - self.__StoneRadius,
                 pos.x + self.__StoneRadius,
                 pos.y + self.__StoneRadius,
                 fill = str_color)
+
+    def update_stones(self, coords, color):
+        for coord in coords:
+            pos = self.coord_to_canvas_coord(coord)
+            self.__board.set_stone(coord, color)
+            if color == Stone.White or color == Stone.Black:
+                self.show_stone(pos, color)
+            else:
+                self.__canvas.create_rectangle(
+                    pos.x - self.__CellSize / 2, pos.y - self.__CellSize / 2,
+                    pos.x + self.__CellSize / 2, pos.y + self.__CellSize / 2,
+                    fill=self.__BoardColor,
+                    outline=self.__CellOutlineColor
+                )
         stones_counts = self.__board.get_stones_counts()
         self.update_stones_counts(stones_counts)
 
@@ -183,10 +193,60 @@ class View:
 
     def update_highlight(self):
         cells_to_highlight = self.__controller.request_puttable_cells_for_current_player()
+        for x in range(Board.Size):
+            for y in range(Board.Size):
+                coord = Coord(x, y)
+                pos = self.coord_to_canvas_coord(coord)
+                stone = self.__board.get_stone(coord)
+                if coord in cells_to_highlight:
+                    self.__canvas.create_rectangle(
+                            pos.x - self.__CellSize / 2, pos.y - self.__CellSize / 2,
+                            pos.x + self.__CellSize / 2, pos.y + self.__CellSize / 2,
+                            fill=self.__HighlightedCellColor,
+                            outline=self.__CellOutlineColor
+                        )
+                else:
+                    self.__canvas.create_rectangle(
+                            pos.x - self.__CellSize / 2, pos.y - self.__CellSize / 2,
+                            pos.x + self.__CellSize / 2, pos.y + self.__CellSize / 2,
+                            fill=self.__BoardColor,
+                            outline=self.__CellOutlineColor
+                        )
+                self.show_stone(pos, stone)
 
-    def notify_need_pass(self):
-        messagebox.showinfo('Need pass', 'You need to pass')
-        self.update_highlight()
+    def notify_need_pass(self, color):
+        str_color = ''
+        if color == Stone.White:
+            str_color = 'white'
+        else:
+            str_color = 'black'
+        messagebox.showinfo('Need pass',
+            f'''
+            The {str_color} one need to pass.
+            Press the button to proceed to next.
+            ''')
+
+    def notify_player_wins(self, color):
+        winner = ''
+        if color == Stone.White:
+            winner = 'white'
+        elif color == Stone.Black:
+            winner = 'black'
+        else:
+            raise BaseException()
+        
+        messagebox.showinfo('Player wins',
+            f'''
+            The {winner} one won.
+            Press the button to start a new game.
+            ''')
+        self.__controller.request_initialize_board()
+
+    def notify_put_fails(self, coord):
+        messagebox.showerror('Put fails',
+            f'''
+            You cannot put stone at {coord}.
+            ''')
 
     def create_window(self, board):
         '''
@@ -220,7 +280,7 @@ class View:
             self.__BoardCoord.y,
             self.__BoardCoord.x + self.__CellSize * 8,
             self.__BoardCoord.y + self.__CellSize * 8,
-            fill = 'green')
+            fill = self.__BoardColor)
 
         for i in range(9):
             # Vertical line
@@ -229,7 +289,7 @@ class View:
                 self.__BoardCoord.y,
                 self.__BoardCoord.x + i * self.__CellSize,
                 self.__BoardCoord.y + self.__CellSize * 8,
-                fill = 'black')
+                fill = self.__CellOutlineColor)
             
             # Horizontal line
             self.__canvas.create_line(
@@ -237,7 +297,7 @@ class View:
                 self.__BoardCoord.y + i * self.__CellSize,
                 self.__BoardCoord.x + self.__CellSize * 8,
                 self.__BoardCoord.y + i * self.__CellSize,
-                fill = 'black')
+                fill = self.__CellOutlineColor)
         
         # ----- Stones -----
         self.set_board(board)
