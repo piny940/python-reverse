@@ -408,15 +408,7 @@ class Reversi:
             Put stone of 'color' to the position 'coord', and reverse the
             stones sandwiched by the new stone and some existing stone whose
             color is 'color' too.
-
-            Also checks how many white/black stones on the board, and checks if
-            either player wins.
         '''
-        if not self.can_put_here(coord, color):
-            # Cannot put here
-            self.__controller.request_notify_put_fails(coord)
-            return
-
         # Put new stone
         self.__board.set_stone(coord, color)
         for d in Reversi.EightDirections:
@@ -431,6 +423,22 @@ class Reversi:
         # Tell View about changes on board
         self.__controller.request_update_stones([coord], color)
         self.__controller.request_reverse_stones(sandwiched_stones)
+
+    def put_stone(self, coord):
+        '''
+        put_stone(coord):
+            Check if the current player can put a stone at `coord`, and if can,
+            put one.
+
+            Also checks the number of white/black stones on the board, and
+            checks if either player wins.
+        '''
+        if not self.can_put_here(coord, self.__player_color):
+            # Cannot put here
+            self.__controller.request_notify_put_fails(coord)
+            return
+
+        self.put_stone_color(coord, self.__player_color)
 
         # Check if either player wins
         w = self.__board.get_white_stones_count()
@@ -449,9 +457,6 @@ class Reversi:
         else:
             # No one wins yet. Continue the game.
             self.proceed_to_next()
-
-    def put_stone(self, coord):
-        self.put_stone_color(coord, self.__player_color)
 
     def proceed_to_next(self):
         '''
