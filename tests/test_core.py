@@ -475,3 +475,121 @@ class TestReversi(t.TestCase):
             core.Coord(3, 6),
             core.Coord(5, 6),
         ])
+
+
+class TestCPU(t.TestCase):
+    def test_get_base_score_of_coord_1(self):
+        r = core.Reversi()
+        for c in [
+                core.Coord(0, 0),
+                core.Coord(7, 0),
+                core.Coord(0, 7),
+                core.Coord(7, 7),
+                ]:
+            self.assertEqual(
+                    core.CPU.get_base_score_of_coord(r, c, core.Stone.White),
+                    core.CPU.Score.Corner,
+                    'Coord: ' + str(c))
+
+    def test_get_base_score_of_coord_2(self):
+        r = core.Reversi()
+        r.get_board().set_entire(board_string_to_matrix('''
+            oxx**xxo
+            x*******
+            x*......
+            **......
+            **....**
+            x*....*x
+            x*....*x
+            o*....*o
+        '''))
+        for c in [
+                core.Coord(3, 0),
+                core.Coord(4, 0),
+                core.Coord(0, 3),
+                core.Coord(0, 4),
+                core.Coord(7, 4)
+                ]:
+            self.assertEqual(
+                    core.CPU.get_base_score_of_coord(r, c, core.Stone.White),
+                    core.CPU.Score.CornerSide,
+                    'Coord: ' + str(c))
+
+    def test_get_base_score_of_coord_3(self):
+        r = core.Reversi()
+        r.get_board().set_entire(board_string_to_matrix('''
+            o*....*o
+            **....**
+            ........
+            ........
+            ........
+            ........
+            **....**
+            o*....*o
+        '''))
+        for c in [
+                core.Coord(1, 0),
+                core.Coord(6, 0),
+                core.Coord(0, 1),
+                core.Coord(0, 6),
+                core.Coord(7, 6)
+                ]:
+            self.assertEqual(
+                    core.CPU.get_base_score_of_coord(r, c, core.Stone.White),
+                    core.CPU.Score.CornerSide,
+                    'Coord: ' + str(c))
+
+    def test_get_base_score_of_coord_4(self):
+        r = core.Reversi()
+        r.get_board().set_entire(board_string_to_matrix('''
+            .*....*.
+            **....**
+            ........
+            ........
+            ........
+            ........
+            **....**
+            .*....*.
+        '''))
+        for c in [
+                core.Coord(1, 0),
+                core.Coord(1, 1),
+                core.Coord(0, 1),
+
+                core.Coord(0, 6),
+                core.Coord(1, 6),
+                core.Coord(1, 7),
+
+                core.Coord(6, 0),
+                core.Coord(6, 1),
+                core.Coord(7, 1),
+
+                core.Coord(6, 7),
+                core.Coord(6, 6),
+                core.Coord(7, 6),
+                ]:
+            self.assertEqual(
+                    core.CPU.get_base_score_of_coord(r, c, core.Stone.White),
+                    core.CPU.Score.AroundCorner,
+                    'Coord: ' + str(c))
+
+    def test_get_base_score_of_coord_5(self):
+        r = core.Reversi()
+        r.get_board().set_entire(board_string_to_matrix('''
+            ........
+            ........
+            *..*....
+            ........
+            ........
+            ........
+            ... ....
+            ........
+        '''))
+        for c in [
+                core.Coord(0, 2),
+                core.Coord(3, 2),
+                ]:
+            self.assertEqual(
+                    core.CPU.get_base_score_of_coord(r, c, core.Stone.White),
+                    core.CPU.Score.Normal,
+                    'Coord: ' + str(c))
