@@ -20,9 +20,13 @@ class ControllerBase(metaclass=ABCMeta):
     @abstractmethod
     def request_puttable_cells_for_current_player(self):
         pass
-    
+
     @abstractmethod
-    def request_notify_player_change(self, next_player_color):
+    def request_get_play_mode(self):
+        pass
+
+    @abstractmethod
+    def request_get_cpu_color(self):
         pass
     
     # TODO: A function to switch "Player vs Player" and "Player vs CPU"
@@ -46,6 +50,10 @@ class ControllerBase(metaclass=ABCMeta):
 
     @abstractmethod
     def request_notify_player_wins(self, color):
+        pass
+    
+    @abstractmethod
+    def request_notify_player_change(self, next_player_color):
         pass
 
     @abstractmethod
@@ -80,6 +88,12 @@ class Controller(ControllerBase):
     def request_puttable_cells_for_current_player(self):
         color = self.__reversi.get_player_color()
         return self.__reversi.get_puttable_coords(color)
+
+    def request_get_play_mode(self):
+        return self.__reversi.get_play_mode()
+
+    def request_get_cpu_color(self):
+        return self.__reversi.get_cpu_color()
 
     # ----- Functions to be called in core.py -----
     def request_notify_put_fails(self, coord):

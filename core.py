@@ -314,7 +314,8 @@ class Reversi:
         self.init_state()
 
     def init_state(self):
-        self.__player_color = Stone.White
+        self.__player_color = Stone.Black
+        self.__cpu_color = Stone.get_rival_stone_color(self.__player_color)
         self.__board.init_state()
 
         # Initialize board like this:
@@ -518,3 +519,6 @@ class Reversi:
 
     def get_board(self):
         return self.__board
+
+    def get_cpu_color(self):
+        return self.__cpu_color
