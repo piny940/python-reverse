@@ -463,7 +463,7 @@ class Reversi:
 
         next_player = Stone.get_rival_stone_color(self.__player_color)
         if self.need_pass(next_player):
-            # TODO: Notify
+            self.__controller.request_notify_need_pass()
             return
 
         if self.get_play_mode() == Reversi.PlayMode.VsCPU:
@@ -472,8 +472,7 @@ class Reversi:
                 self.put_stone_color(
                         CPU.get_put_coord(self, next_player), next_player)
                 if self.need_pass(self.__player_color):
-                    # TODO: Notify
-                    pass
+                    self.__controller.request_notify_need_pass()
                 else:
                     break
 
