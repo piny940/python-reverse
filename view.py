@@ -330,7 +330,7 @@ class View:
             self.__BoardCoord.y + self.__CellSize * 8,
             fill = self.__BoardColor)
 
-        for i in range(9):
+        for i in range(Board.Size + 1):
             # Vertical line
             self.__canvas.create_line(
                 self.__BoardCoord.x + i * self.__CellSize,
