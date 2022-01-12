@@ -268,7 +268,7 @@ class View:
         self.__window.update()
         messagebox.showinfo('Need pass',
             f'''
-            The {str_color} one need to pass.
+            The {str_color} player need to pass.
             Press the button to proceed to next.
             ''')
 
@@ -284,7 +284,7 @@ class View:
         self.__window.update()
         messagebox.showinfo('Player wins',
             f'''
-            The {winner} one won.
+            The {winner} player wins.
             Press the button to start a new game.
             ''')
         self.__controller.request_initialize_board()
